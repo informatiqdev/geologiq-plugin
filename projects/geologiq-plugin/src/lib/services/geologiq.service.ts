@@ -84,11 +84,11 @@ export class GeologiqService implements OnDestroy {
 
         this._canvas = this.document.createElement('canvas');
         this._canvas.id = elementId;
-        this._canvas.classList.add("unity", "hidden");
-        this._canvas.style.width = 800 + 'px';
+        this._canvas.classList.add("geologiq-plugin", "hidden");
+        this._canvas.style.width = 600 + 'px';
         this._canvas.style.height = 600 + 'px'; 
-        this._canvas.width = 800;
-        this._canvas.height = 600;
+        // this._canvas.width = 800;
+        // this._canvas.height = 600;
      
         // Create new Unity 3D engine instance
         this._unityInstance = await createUnityInstance(this._canvas, config, (progress: number): void => {
@@ -185,7 +185,7 @@ export class GeologiqService implements OnDestroy {
         if (!parameter) {
             this._unityInstance.SendMessage(objectName, methodName);
         } else {
-            this._unityInstance.SendMessage(objectName, methodName, parameter);
+            this._unityInstance.SendMessage(objectName, methodName, JSON.stringify(parameter));
         }
     });
   }

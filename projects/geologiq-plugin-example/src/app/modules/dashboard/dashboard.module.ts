@@ -18,7 +18,7 @@ const routes: Route[] = [
         DashboardComponent,
         WellboreComponent
     ],
-    imports     : [
+    imports: [
         RouterModule.forChild(routes),
         GeologiqPluginModule
     ]

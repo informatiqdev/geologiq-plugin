@@ -1,27 +1,20 @@
-import { Component, ViewChild, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 
 import { GeologiqService } from '../services/geologiq.service';
+import { Tube, Model3D, Point } from '../models';
 
 @Component({
   selector: 'geologiq-plugin',
   templateUrl: './geologiq-plugin.component.html',
   styleUrls: ['./geologiq-plugin.component.scss']
 })
-export class GeologiqPluginComponent implements OnInit, OnDestroy {
+export class GeologiqPluginComponent {
 
   @ViewChild('geologiqcontainer')
   private _geologiqContainer?: ElementRef;
 
   constructor(  
     private _geologiqService: GeologiqService) {
-  }
-
-  ngOnInit() {
-    console.debug('GeologiQ plugin component is loaded.');
-  }
-
-  ngOnDestroy() {
-    console.debug('GeologiQ plugin component is destroyed.');
   }
 
   show() {
@@ -46,5 +39,25 @@ export class GeologiqPluginComponent implements OnInit, OnDestroy {
 
     this._geologiqContainer.nativeElement.remove(canvas as Node);
     canvas.classList.add('hidden');
+  }
+
+  createView(view: Point) {
+    this._geologiqService.send('GeologiQ', 'CreateView', view);
+  }
+
+  toggleOcean(show: boolean) {
+    this._geologiqService.send('GeologiQ', show ? 'ShowOcean' : 'HideOcean');
+  }
+
+  toggleSeabed(show: boolean) {
+    this._geologiqService.send('GeologiQ', show ? 'ShowSeabed' : 'HideSeabed');
+  }
+
+  drawTube(tube: Tube) {
+    this._geologiqService.send('GeologiQ', 'DrawTube', tube);
+  }
+
+  load3DModel(model: Model3D) {
+    this._geologiqService.send('GeologiQ', 'Load3DModel', model);
   }
 }
