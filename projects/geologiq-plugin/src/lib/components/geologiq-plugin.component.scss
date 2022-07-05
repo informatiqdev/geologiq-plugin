@@ -1,0 +1,22 @@
+.geologiq-plugin-container {
+    .geologiq-plugin {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        border: none;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: block;
+        background-color: transparent;
+        -webkit-user-select: none; /* Chrome all / Safari all */
+        -moz-user-select: none; /* Firefox all */
+        -ms-user-select: none; /* IE 10+ */
+        user-select: none; /* Likely future */
+
+        &.hidden {
+            display: none !important;
+        }
+    }
+}

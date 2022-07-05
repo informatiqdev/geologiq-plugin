@@ -1,0 +1,146 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "geologiq-plugin": {
+      "projectType": "library",
+      "root": "projects/geologiq-plugin",
+      "sourceRoot": "projects/geologiq-plugin/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/geologiq-plugin/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/geologiq-plugin/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/geologiq-plugin/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/geologiq-plugin/src/test.ts",
+            "tsConfig": "projects/geologiq-plugin/tsconfig.spec.json",
+            "karmaConfig": "projects/geologiq-plugin/karma.conf.js"
+          }
+        }
+      }
+    },
+    "geologiq-plugin-example": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/geologiq-plugin-example",
+      "sourceRoot": "projects/geologiq-plugin-example/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/geologiq-plugin-example",
+            "index": "projects/geologiq-plugin-example/src/index.html",
+            "main": "projects/geologiq-plugin-example/src/main.ts",
+            "polyfills": "projects/geologiq-plugin-example/src/polyfills.ts",
+            "tsConfig": "projects/geologiq-plugin-example/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/geologiq-plugin-example/src/favicon.ico",
+              "projects/geologiq-plugin-example/src/assets"
+            ],
+            "styles": [
+              "projects/geologiq-plugin-example/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/geologiq-plugin-example/src/environments/environment.ts",
+                  "with": "projects/geologiq-plugin-example/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "geologiq-plugin-example:build:production"
+            },
+            "development": {
+              "browserTarget": "geologiq-plugin-example:build:development"
+            }
+          },
+          "options": {
+            "sslKey": "ssl/server.key",
+            "sslCert": "ssl/server.crt"
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "geologiq-plugin-example:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/geologiq-plugin-example/src/test.ts",
+            "polyfills": "projects/geologiq-plugin-example/src/polyfills.ts",
+            "tsConfig": "projects/geologiq-plugin-example/tsconfig.spec.json",
+            "karmaConfig": "projects/geologiq-plugin-example/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/geologiq-plugin-example/src/favicon.ico",
+              "projects/geologiq-plugin-example/src/assets"
+            ],
+            "styles": [
+              "projects/geologiq-plugin-example/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "geologiq-plugin-example"
+}
