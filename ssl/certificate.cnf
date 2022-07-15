@@ -5,11 +5,11 @@ default_md = sha256
 x509_extensions = v3_req
 distinguished_name = dn
 [dn]
-C = [Country]
-ST = [State]
-L = [Language]
-O = [Company]
-OU = [OU]
+C = NO
+ST = Oslo
+L = Oslo
+O = InformatiQ
+OU = IT
 emailAddress = developer@company.com
 CN = localhost
 [v3_req]
