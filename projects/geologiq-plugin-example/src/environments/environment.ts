@@ -10,7 +10,12 @@ export const environment = {
       dataUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.data.gz',
       frameworkUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.framework.js.gz',
       codeUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.wasm.gz',
-      productVersion: '4.0.0-a.2'
+      productVersion: '4.0.0-a.3',
+      // loaderUrl: 'https://localhost:4200/assets/unity/geologiq/[version]/geologiq.loader.js',
+      // dataUrl: 'https://localhost:4200/assets/unity/geologiq/[version]/geologiq.data',
+      // frameworkUrl: 'https://localhost:4200/assets/unity/geologiq/[version]/geologiq.framework.js',
+      // codeUrl: 'https://localhost:4200/assets/unity/geologiq/[version]/geologiq.wasm',
+      // productVersion: '4.0.0-a.3',
     }
   }
 };
