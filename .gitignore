@@ -42,3 +42,5 @@ testem.log
 Thumbs.db
 ssl/server.crt
 ssl/server.key
+/.vs
+/projects/geologiq-plugin-example/src/assets/unity/geologiq
