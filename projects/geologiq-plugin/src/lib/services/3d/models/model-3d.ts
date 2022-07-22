@@ -2,7 +2,7 @@ import { Point } from './point';
 import { Color } from './color'
 
 export class Model3D {
-    id?: string;
+    id: string = '';
     name?: string;
     type?: string;
     color?: Color;

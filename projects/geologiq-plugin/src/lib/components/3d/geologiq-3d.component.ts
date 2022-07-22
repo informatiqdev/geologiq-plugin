@@ -1,19 +1,19 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 
-import { GeologiqService } from '../services/geologiq.service';
-import { Tube, Model3D, Point } from '../models';
+import { GeologiqService } from '../../services/3d/geologiq.service';
+import { Tube, Model3D, Point } from '../../services/3d';
 
 @Component({
-  selector: 'geologiq-plugin',
-  templateUrl: './geologiq-plugin.component.html',
-  styleUrls: ['./geologiq-plugin.component.scss']
+  selector: 'geologiq-3d',
+  templateUrl: './geologiq-3d.component.html',
+  styleUrls: ['./geologiq-3d.component.scss']
 })
-export class GeologiqPluginComponent {
+export class Geologiq3dComponent {
 
   @ViewChild('geologiqcontainer')
   private _geologiqContainer?: ElementRef;
 
-  constructor(  
+  constructor(
     private _geologiqService: GeologiqService) {
   }
 
@@ -27,7 +27,7 @@ export class GeologiqPluginComponent {
 
     this._geologiqContainer.nativeElement.appendChild(canvas as Node);
     canvas.classList.remove('hidden');
-  } 
+  }
 
   hide() {
     if (!this._geologiqContainer)
@@ -59,5 +59,9 @@ export class GeologiqPluginComponent {
 
   load3DModel(model: Model3D) {
     this._geologiqService.send('GeologiQ', 'Load3DModel', model);
+  }
+
+  clear() {
+    this._geologiqService.send('GeologiQ', 'ClearView');
   }
 }

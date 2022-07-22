@@ -1,9 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { Observable, Subscription, Subject } from 'rxjs';
-import { first, switchMap, takeUntil } from 'rxjs/operators';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { filter, first, switchMap, takeUntil } from 'rxjs/operators';
 import { Injectable, Inject, NgZone, OnDestroy } from '@angular/core';
 
-import { GeologiqConfig } from '../config/geologiq-config';
+import { GeologiqConfig } from '../../config/geologiq-config';
 
 /**
  * Unity Javascript interface
@@ -13,8 +13,8 @@ export declare function createUnityInstance(elementId: Element, config: Object, 
 export declare class UnityInstance {
   constructor();
 
-  public SetFullscreen(fullscreen: number): void;
-  public SendMessage(gameObjectName: string, methodName: string, parameter?: any): void;
+  SetFullscreen(fullscreen: number): void;
+  SendMessage(gameObjectName: string, methodName: string, parameter?: any): void;
 }
 
 /**
@@ -27,41 +27,42 @@ export class GeologiqService implements OnDestroy {
 
   private destroy$ = new Subject<boolean>();
 
-  private _loaded = false; 
+  private loaded = false;
 
-  private _unityActivated = new Subject<boolean>();
-  public activated$ = this._unityActivated.asObservable();
+  private unityActivated = new BehaviorSubject<boolean>(false);
 
-  private _canvas?: HTMLCanvasElement;
-  private _unityInstance?: UnityInstance;
+  activated$ = this.unityActivated.pipe(
+    filter(active => true === active)
+  );
+
+  private canvas?: HTMLCanvasElement;
+  private unityInstance?: UnityInstance;
 
   constructor(
-      private zone: NgZone,
-      @Inject(DOCUMENT) private document: Document) {
+    private zone: NgZone,
+    @Inject(DOCUMENT) private document: Document) {
   }
 
   ngOnDestroy(): void {
-      console.log("Geologiq service is destroyed.");     
-      
-      this.destroy$.next(true);
-      this.destroy$.complete();
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
   /**
    * Injects Unity3D loader script to page and loads script for remote URL
-   * @param source Script source URL 
+   * @param source Script source URL
    */
   private loadScript(source: string): Observable<Event> {
     return new Observable(observer => {
-      const head = this.document.getElementsByTagName('head')[0];
-
-      let unityLoaderScript = this.document.createElement('script');
+      const unityLoaderScript = this.document.createElement('script');
       unityLoaderScript.type = 'text/javascript';
       unityLoaderScript.async = true;
       unityLoaderScript.src = source;
       unityLoaderScript.onload = (e) => {
         observer.next(e);
       };
+
+      const head = this.document.getElementsByTagName('head')[0];
       head.appendChild(unityLoaderScript);
     });
   }
@@ -70,7 +71,7 @@ export class GeologiqService implements OnDestroy {
    * Initializes HTML canvas element with GeologiQ 3D engine
    * @param elementId Canvas element ID
    * @param opts Geolg
-   * @param onProgress 
+   * @param onProgress
    */
   private async load(elementId: string, opts: GeologiqConfig, onProgress?: (number: number) => void) {
     this.loadScript(opts.loaderUrl).pipe(
@@ -79,28 +80,26 @@ export class GeologiqService implements OnDestroy {
           ...opts,
           showBanner: (msg: string, type: any) => {
             console.error('GeologiQ failed to load: ', { type, msg });
-          }        
+          }
         };
 
-        this._canvas = this.document.createElement('canvas');
-        this._canvas.id = elementId;
-        this._canvas.classList.add("geologiq-plugin", "hidden");
-        this._canvas.style.width = 600 + 'px';
-        this._canvas.style.height = 600 + 'px'; 
-        // this._canvas.width = 800;
-        // this._canvas.height = 600;
-     
+        this.canvas = this.document.createElement('canvas');
+        this.canvas.id = elementId;
+        this.canvas.classList.add("geologiq-plugin", "hidden");
+        this.canvas.style.width = 100 + '%';
+        this.canvas.style.height = 100 + '%';
+
         // Create new Unity 3D engine instance
-        this._unityInstance = await createUnityInstance(this._canvas, config, (progress: number): void => {
-            if (onProgress)
-                onProgress(progress);
+        this.unityInstance = await createUnityInstance(this.canvas, config, (progress: number): void => {
+          if (onProgress)
+            onProgress(progress);
         });
 
         // Indicate that Unity3D Engine is loaded
-        this._loaded = true;       
+        this.loaded = true;
 
         // Indicate that Unity3D Engine is activated
-        this._unityActivated.next(true);
+        this.unityActivated.next(true);
       }),
       takeUntil(this.destroy$)
     ).subscribe();
@@ -111,9 +110,9 @@ export class GeologiqService implements OnDestroy {
    * @returns True if Unity3D engine is loaded
    */
   isLoaded(): boolean {
-    return this._unityInstance !== null && this._loaded;
+    return this.unityInstance !== null && this.loaded;
   }
- 
+
   /**
    * Initialize GeologiQ 3D plugin
    * @param elementId HTML canvas element identifier
@@ -130,31 +129,31 @@ export class GeologiqService implements OnDestroy {
       codeUrl: opts.codeUrl.replace('[version]', opts.productVersion),
       onRuntimeInitialized: () => {
         if (onLoaded)
-          onLoaded();     
-      }   
+          onLoaded();
+      }
     };
 
     this.zone.onStable.pipe(
-        first(), 
-        takeUntil(this.destroy$)
+      first(),
+      takeUntil(this.destroy$)
     ).subscribe(() => {
-        // If Unity instance has not been loaded before, then load the Unity engine
-        if (!this._unityInstance) {       
-            this.zone.runOutsideAngular(() => {
-                this.load(elementId, config, onProgress);
-            });
-        } else {
-            if (this._unityInstance)
-                this._unityActivated.next(true);
-        }
+      // If Unity instance has not been loaded before, then load the Unity engine
+      if (!this.unityInstance) {
+        this.zone.runOutsideAngular(() => {
+          this.load(elementId, config, onProgress);
+        });
+      } else {
+        if (this.unityInstance)
+          this.unityActivated.next(true);
+      }
     });
   }
 
   /**
    * GeologiQ 3D engine HTML canvas element reference
    */
-  public get canvasElement(): HTMLCanvasElement | null {
-    return this._canvas ?? null;
+  get canvasElement(): HTMLCanvasElement | null {
+    return this.canvas ?? null;
   }
 
   /**
@@ -166,7 +165,7 @@ export class GeologiqService implements OnDestroy {
       return;
 
     this.zone.runOutsideAngular(() => {
-      this._unityInstance?.SetFullscreen(fullscreen === true ? 1 : 0);
+      this.unityInstance?.SetFullscreen(fullscreen === true ? 1 : 0);
     });
   }
 
@@ -176,17 +175,16 @@ export class GeologiqService implements OnDestroy {
    * @param methodName 3D engine API object method name
    * @param parameter  3D engine API object method parameters
    */
-  send(objectName: string, methodName: string, parameter?: any) : void {
-    
+  send(objectName: string, methodName: string, parameter?: any): void {
     this.zone.runOutsideAngular(() => {
-        if (!this._unityInstance)
-            throw new Error("send() cannot be called before GeologiQ 3D engine has been loaded.");
+      if (!this.unityInstance || !this.isLoaded())
+        throw new Error("send() cannot be called before GeologiQ 3D engine has been loaded.");
 
-        if (!parameter) {
-            this._unityInstance.SendMessage(objectName, methodName);
-        } else {
-            this._unityInstance.SendMessage(objectName, methodName, JSON.stringify(parameter));
-        }
+      if (!parameter) {
+        this.unityInstance.SendMessage(objectName, methodName);
+      } else {
+        this.unityInstance.SendMessage(objectName, methodName, JSON.stringify(parameter));
+      }
     });
   }
 }

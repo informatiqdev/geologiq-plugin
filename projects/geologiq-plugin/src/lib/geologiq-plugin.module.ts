@@ -1,16 +1,19 @@
-import { NgModule, ModuleWithProviders, Optional, SkipSelf } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
-import { GeologiqService } from './services/geologiq.service';
-import { GeologiqPluginComponent } from './components/geologiq-plugin.component';
+import { GeologiqService } from './services/3d/geologiq.service';
+import { Geologiq3dComponent } from './components/3d/geologiq-3d.component';
+import { GeologiqPluginComponent } from './components/render/geologiq-plugin.component';
 
 @NgModule({
   declarations: [
-    GeologiqPluginComponent
+    GeologiqPluginComponent,
+    Geologiq3dComponent
   ],
   imports: [
   ],
   exports: [
-    GeologiqPluginComponent
+    GeologiqPluginComponent,
+    // Geologiq3dComponent
   ]
 })
 export class GeologiqPluginModule {
@@ -23,11 +26,4 @@ export class GeologiqPluginModule {
       ]
     };
   }
-
- /* constructor(@Optional() @SkipSelf() parentModule: GeologiqPluginModule) {
-    if (parentModule) {
-      throw new Error('GeologiqPluginModule is already loaded. Import it in the root module only.');
-    }
-  }*/
-
 }
