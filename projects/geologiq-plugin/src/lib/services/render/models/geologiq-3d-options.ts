@@ -2,7 +2,7 @@ import { Color, Point } from "../../3d";
 
 export interface Wellbore3dOptions {
     default?: Wellbore3dConfig;
-    wellbores?: Map<string, Wellbore3dConfig>
+    wellbores?: Map<string, Wellbore3dConfig>;
 }
 
 export interface Wellbore3dConfig {

@@ -1,5 +1,5 @@
 {
-  "name": "geologiq-plugin",
+  "name": "@informatiq/geologiq-plugin",
   "version": "0.1.0",
   "peerDependencies": {
     "@angular/common": "^13.3.0",
