@@ -5,5 +5,5 @@ import { Wellbore } from './wellbore';
 export interface GeologiqData {
     wellbore: Wellbore;
     casings?: Casing[];
-    risks: Risk[];
+    risks?: Risk[];
 }

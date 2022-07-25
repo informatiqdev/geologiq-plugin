@@ -22,8 +22,8 @@ import { WellboreRenderService } from '../../services/render/wellbore-render.ser
 export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDestroy {
     private destroy$ = new Subject<void>();
 
-    @Input() centerPosition: Point = new Point();
-    @Input() models: GeologiqData[] = [];
+    @Input() centerPosition?: Point;
+    @Input() models?: GeologiqData[];
     @Input() options?: Geologiq3dOptions;
 
     @ViewChild(Geologiq3dComponent)
@@ -48,7 +48,9 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
             tap(() => {
                 // Display GeologiQ 3D engine
                 this.geologiq3d?.show();
+                if(null != this.centerPosition){
                 this.geologiq3d?.createView(this.centerPosition);
+                }
 
                 this.refreshView();
             }),
@@ -61,13 +63,15 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
             throw new Error('GeologiQ component not properly initialized.');
         }
 
-        const wellbores = this.models.map(item => item.wellbore);
+        const models = this.models || [];
+
+        const wellbores = models.map(item => item.wellbore);
         const tubes: Tube[] = this.wellboreRender.getTubes(wellbores, this.options?.wellbore);
         tubes.forEach(tube => {
             this.geologiq3d?.drawTube(tube);
         });
 
-        this.models.forEach(({ wellbore, casings, risks }) => {
+        models.forEach(({ wellbore, casings, risks }) => {
             let models: Model3D[] = this.casingRender.getCasingModels(casings || [], wellbore.id, this.options?.casing);
             models.forEach(model => {
                 this.geologiq3d?.load3DModel(model);

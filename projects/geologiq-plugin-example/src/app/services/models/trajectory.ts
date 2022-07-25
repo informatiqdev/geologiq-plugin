@@ -2,7 +2,7 @@ import { EntityRef } from './entity-ref';
 import { Point } from 'geologiq-plugin';
 
 export class Trajectory {
-    id?: string;
+    id: string = '';
     name?: string;
     wellbore?: EntityRef;
     md?: number[];

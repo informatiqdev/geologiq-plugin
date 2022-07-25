@@ -4,6 +4,7 @@
 export * from './lib/config/geologiq-config';
 export * from './lib/services/3d/models/color';
 export * from './lib/services/3d/models/point';
+export * from './lib/services/3d/geologiq.service';
 export * from './lib/services/render';
 
 export * from './lib/services/render/wellbore-render.service';
