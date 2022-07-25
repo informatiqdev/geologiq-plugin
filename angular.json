@@ -34,6 +34,18 @@
             "tsConfig": "projects/geologiq-plugin/tsconfig.spec.json",
             "karmaConfig": "projects/geologiq-plugin/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/geologiq-plugin/tsconfig.lib.json",
+              "projects/geologiq-plugin/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
         }
       }
     },
@@ -59,7 +71,7 @@
             "main": "projects/geologiq-plugin-example/src/main.ts",
             "polyfills": "projects/geologiq-plugin-example/src/polyfills.ts",
             "tsConfig": "projects/geologiq-plugin-example/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
+            "aot": true,
             "assets": [
               "projects/geologiq-plugin-example/src/favicon.ico",
               "projects/geologiq-plugin-example/src/assets"
@@ -113,6 +125,7 @@
             }
           },
           "options": {
+            "browserTarget": "geologiq-plugin-example:build",
             "sslKey": "ssl/server.key",
             "sslCert": "ssl/server.crt"
           },
@@ -140,6 +153,19 @@
               "projects/geologiq-plugin-example/src/styles.scss"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/geologiq-example/tsconfig.app.json",
+              "projects/geologiq-example/tsconfig.spec.json",
+              "projects/geologiq-example/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }

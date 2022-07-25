@@ -21,6 +21,7 @@ export class WellboreComponent implements OnInit, OnDestroy {
         y: 0,
         z: 6000000.000
     };
+
     wellbores: Wellbore[] = [];
     casings: Casing[] = [];
     risks: Risk[] = [];
@@ -36,22 +37,22 @@ export class WellboreComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.trajectoryService.get().pipe(
             take(1),
-            tap((result) => {
-                this.wellbores = result.map(traj => {
+            tap((trajectories) => {
+                this.wellbores = trajectories.map(trajectory => {
                     const wellbore: Wellbore = {
-                        id: traj.id,
-                        name: traj.name,
-                        md: traj.md,
-                        points: traj.points,
-                        wellHeadPosition: traj.wellHeadPosition
+                        id: trajectory.id,
+                        name: trajectory.name,
+                        md: trajectory.md,
+                        points: trajectory.points,
+                        wellHeadPosition: trajectory.wellHeadPosition
                     };
 
                     return wellbore;
                 });
 
-                result.forEach(traj => {
-                    this.loadCasings(traj);
-                    this.loadRisks(traj);
+                trajectories.forEach(trajectory => {
+                    this.loadCasings(trajectory);
+                    this.loadRisks(trajectory);
                 });
             }),
             takeUntil(this.destroy$)

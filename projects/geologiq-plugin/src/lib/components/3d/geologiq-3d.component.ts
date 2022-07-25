@@ -42,26 +42,26 @@ export class Geologiq3dComponent {
   }
 
   createView(view: Point) {
-    this._geologiqService.send('GeologiQ', 'CreateView', view);
+    this._geologiqService.send('ContentManager', 'CreateView', view);
   }
 
   toggleOcean(show: boolean) {
-    this._geologiqService.send('GeologiQ', show ? 'ShowOcean' : 'HideOcean');
+    this._geologiqService.send('ContentManager', show ? 'ShowOcean' : 'HideOcean');
   }
 
   toggleSeabed(show: boolean) {
-    this._geologiqService.send('GeologiQ', show ? 'ShowSeabed' : 'HideSeabed');
+    this._geologiqService.send('ContentManager', show ? 'ShowSeabed' : 'HideSeabed');
   }
 
   drawTube(tube: Tube) {
-    this._geologiqService.send('GeologiQ', 'DrawTube', tube);
+    this._geologiqService.send('ContentManager', 'DrawTube', tube);
   }
 
   load3DModel(model: Model3D) {
-    this._geologiqService.send('GeologiQ', 'Load3DModel', model);
+    this._geologiqService.send('ContentManager', 'Load3DModel', model);
   }
 
   clear() {
-    this._geologiqService.send('GeologiQ', 'ClearView');
+    this._geologiqService.send('ContentManager', 'ClearView');
   }
 }

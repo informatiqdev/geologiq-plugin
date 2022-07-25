@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { from, Subject, takeUntil, tap } from 'rxjs';
+import { from, Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 import { GeologiqConfig, GeologiqService } from 'geologiq-plugin';

@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
-import { Subject, take, takeUntil, tap } from 'rxjs';
+import { Subject } from 'rxjs';
+import { take, takeUntil, tap } from 'rxjs/operators';
 
 import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 

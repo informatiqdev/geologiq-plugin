@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, take } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 
 
 @Injectable()

@@ -38,9 +38,12 @@ export class GeologiqService implements OnDestroy {
   private canvas?: HTMLCanvasElement;
   private unityInstance?: UnityInstance;
 
+  private _document: Document;
+
   constructor(
     private zone: NgZone,
-    @Inject(DOCUMENT) private document: Document) {
+    @Inject(DOCUMENT) document: any) {
+      this._document = document;
   }
 
   ngOnDestroy(): void {
@@ -54,7 +57,7 @@ export class GeologiqService implements OnDestroy {
    */
   private loadScript(source: string): Observable<Event> {
     return new Observable(observer => {
-      const unityLoaderScript = this.document.createElement('script');
+      const unityLoaderScript = this._document.createElement('script');
       unityLoaderScript.type = 'text/javascript';
       unityLoaderScript.async = true;
       unityLoaderScript.src = source;
@@ -62,7 +65,7 @@ export class GeologiqService implements OnDestroy {
         observer.next(e);
       };
 
-      const head = this.document.getElementsByTagName('head')[0];
+      const head = this._document.getElementsByTagName('head')[0];
       head.appendChild(unityLoaderScript);
     });
   }
@@ -83,7 +86,7 @@ export class GeologiqService implements OnDestroy {
           }
         };
 
-        this.canvas = this.document.createElement('canvas');
+        this.canvas = this._document.createElement('canvas');
         this.canvas.id = elementId;
         this.canvas.classList.add("geologiq-plugin", "hidden");
         this.canvas.style.width = 100 + '%';
