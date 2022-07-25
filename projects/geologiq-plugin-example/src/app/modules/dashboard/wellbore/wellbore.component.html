@@ -7,9 +7,6 @@
             </div>
             <span class="ml-3 text-sm font-medium text-white">Show ocean</span>
         </label>
-        <br />
-        <input type="text">
-        <br />
         <label for="toggle-seabed" class="inline-flex relative items-center cursor-pointer">
             <input type="checkbox" value="" id="toggle-seabed" class="sr-only peer" checked (click)="toggleSeabed()">
             <div
@@ -19,7 +16,7 @@
         </label>
     </div>
     <div class="w-1/3">
-        <geologiq-plugin [models]="models" [centerPosition]="center"></geologiq-plugin>
+        <geologiq-plugin [wellbores]="wellbores" [centerPosition]="center"></geologiq-plugin>
     </div>
     <div class="w-1/3"></div>
 </div>
