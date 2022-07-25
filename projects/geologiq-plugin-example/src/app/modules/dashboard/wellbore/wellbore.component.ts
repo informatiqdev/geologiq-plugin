@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
-import { GeologiqPluginComponent, Point, Wellbore } from 'geologiq-plugin';
-import { Component, OnDestroy, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Casing, Point, Risk, Wellbore } from 'geologiq-plugin';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { CasingService, ExperienceService, TrajectoryService } from '../../../services';
+import { CasingService, ExperienceService, Trajectory, TrajectoryService } from '../../../services';
 
 @Component({
     selector: 'app-wellbore',
@@ -11,8 +11,10 @@ import { CasingService, ExperienceService, TrajectoryService } from '../../../se
     styleUrls: ['./wellbore.component.scss']
 })
 export class WellboreComponent implements OnInit, OnDestroy {
-    _displaySeabed: boolean = true;
-    _displayOcean: boolean = true;
+    private destroy$ = new Subject<void>();
+
+    displaySeabed: boolean = true;
+    displayOcean: boolean = true;
 
     center: Point = {
         x: 400000.000,
@@ -20,22 +22,19 @@ export class WellboreComponent implements OnInit, OnDestroy {
         z: 6000000.000
     };
     wellbores: Wellbore[] = [];
-
-    destroy$: Subject<boolean> = new Subject<boolean>();
-
-    @ViewChild(GeologiqPluginComponent)
-    _geologiqComponent?: GeologiqPluginComponent;
+    casings: Casing[] = [];
+    risks: Risk[] = [];
 
     constructor(
         // Remote APIs
-        private _casingService: CasingService,
-        private _experienceService: ExperienceService,
-        private _trajectoryService: TrajectoryService,
+        private casingService: CasingService,
+        private experienceService: ExperienceService,
+        private trajectoryService: TrajectoryService,
     ) {
     }
 
     ngOnInit() {
-        this._trajectoryService.get().pipe(
+        this.trajectoryService.get().pipe(
             take(1),
             tap((result) => {
                 this.wellbores = result.map(traj => {
@@ -50,14 +49,17 @@ export class WellboreComponent implements OnInit, OnDestroy {
                     return wellbore;
                 });
 
-                console.log('geo-3d: loaded data', { wellbore: this.wellbores })
+                result.forEach(traj => {
+                    this.loadCasings(traj);
+                    this.loadRisks(traj);
+                });
             }),
             takeUntil(this.destroy$)
         ).subscribe();
     }
 
     ngOnDestroy(): void {
-        this.destroy$.next(true);
+        this.destroy$.next();
         this.destroy$.unsubscribe();
     }
 
@@ -65,66 +67,61 @@ export class WellboreComponent implements OnInit, OnDestroy {
      * Toggle seabead on/off in 3D view
      */
     toggleSeabed() {
-        this._displaySeabed = !this._displaySeabed;
-        // this._geologiqComponent?.toggleSeabed(this._displaySeabed);
+        this.displaySeabed = !this.displaySeabed;
     }
 
     /**
      * Toggle ocean on/off in 3D view
      */
     toggleOcean() {
-        this._displayOcean = !this._displayOcean;
-        // this._geologiqComponent?.toggleOcean(this._displayOcean);
+        this.displayOcean = !this.displayOcean;
     }
 
-    // private loadExperiences(trajectory: Trajectory) {
-    //     if (!trajectory.id)
-    //         return;
+    private loadRisks(trajectory: Trajectory) {
+        if (!trajectory.id)
+            return;
 
-    //     this._experienceService.get(trajectory.id).pipe(
-    //         take(1),
-    //         tap((experiences) => {
+        this.experienceService.get(trajectory.id).pipe(
+            take(1),
+            tap((experiences) => {
+                const risks = experiences.map(exp => {
+                    const risk: Risk = {
+                        id: exp.id ?? '',
+                        title: exp.title,
+                        parent: { id: trajectory.id },
+                        depth: exp.md
+                    };
 
-    //             experiences.forEach(experience => {
-    //                 this._geologiqComponent?.load3DModel({
-    //                     id: experience.id,
-    //                     name: experience.title,
-    //                     type: 'sphere',
-    //                     color:  { r:1, g:0, b:0, a: 0},
-    //                     size: { x:100, y:100, z:100 },
-    //                     parent: trajectory.id,
-    //                     offset: experience.md
-    //                 });
-    //             });
+                    return risk;
+                });
 
-    //         }),
-    //         takeUntil(this.destroy$)
-    //     ).subscribe();
-    // }
+                this.risks = this.risks.concat(risks);
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
+    }
 
-    // private loadCasings(trajectory: Trajectory) {
-    //     if (!trajectory.id)
-    //         return;
+    private loadCasings(trajectory: Trajectory) {
+        if (!trajectory.id)
+            return;
 
-    //     this._casingService.get(trajectory.id).pipe(
-    //         take(1),
-    //         tap((casings) => {
+        this.casingService.get(trajectory.id).pipe(
+            take(1),
+            tap((items) => {
+                const casings = items.map(current => {
+                    const casing: Casing = {
+                        id: current.id ?? '',
+                        name: current.name,
+                        parent: { id: trajectory.id },
+                        shoeDepthMd: current.shoeDepthMd ?? 0
+                    };
 
-    //             casings.forEach(casing => {
-    //                 this._geologiqComponent?.load3DModel({
-    //                     id: casing.id,
-    //                     name: casing.name,
-    //                     type: 'cone',
-    //                     color:  { r:0, g:1, b:0, a: 0},
-    //                     size: { x:100, y:100, z:100 },
-    //                     parent: trajectory.id,
-    //                     offset: casing.shoeDepthMd,
-    //                     direction: 'align'
-    //                 });
-    //             });
+                    return casing;
+                });
 
-    //         }),
-    //         takeUntil(this.destroy$)
-    //     ).subscribe();
-    // }
+                this.casings = this.casings.concat(casings);
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
+    }
 }
