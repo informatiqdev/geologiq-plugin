@@ -34,7 +34,6 @@ export class WellboreComponent implements OnInit, OnDestroy {
         private _casingService: CasingService,
         private _experienceService: ExperienceService,
         private _trajectoryService: TrajectoryService,
-        private geologiqService: GeologiqService
     ) {
     }
 
@@ -52,11 +51,12 @@ export class WellboreComponent implements OnInit, OnDestroy {
                     };
 
                     return {
-                        wellbore
+                        wellbore,
+                        center: this.center
                     };
                 });
 
-                console.log('geo-3d: loaded data', { models: this.models})
+                console.log('geo-3d: loaded data', { models: this.models })
             }),
             takeUntil(this.destroy$)
         ).subscribe();

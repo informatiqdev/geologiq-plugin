@@ -48,8 +48,9 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
             tap(() => {
                 // Display GeologiQ 3D engine
                 this.geologiq3d?.show();
-                if(null != this.centerPosition){
-                this.geologiq3d?.createView(this.centerPosition);
+                if (null != this.centerPosition) {
+                    this.geologiq3d?.createView(this.centerPosition);
+                    // console.log('geo-3d: set center position', { center: this.centerPosition });
                 }
 
                 this.refreshView();
@@ -64,23 +65,27 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
         }
 
         const models = this.models || [];
+        // console.log('geo-3d: set models', { models: this.models, center: this.centerPosition });
 
         const wellbores = models.map(item => item.wellbore);
         const tubes: Tube[] = this.wellboreRender.getTubes(wellbores, this.options?.wellbore);
         tubes.forEach(tube => {
             this.geologiq3d?.drawTube(tube);
         });
+        // console.log('geo-3d: render tubes', { tubes, models: this.models, center: this.centerPosition });
 
         models.forEach(({ wellbore, casings, risks }) => {
             let models: Model3D[] = this.casingRender.getCasingModels(casings || [], wellbore.id, this.options?.casing);
             models.forEach(model => {
                 this.geologiq3d?.load3DModel(model);
             });
+            // console.log('geo-3d: render casings', { casings: models, wellbore, models: this.models, center: this.centerPosition });
 
             models = this.riskRender.getRiskModels(risks || [], wellbore.id, this.options?.risk);
             models.forEach(model => {
                 this.geologiq3d?.load3DModel(model);
             });
+            // console.log('geo-3d: render risks', { risks: models, wellbore, models: this.models, center: this.centerPosition });
         });
     }
 
