@@ -6,11 +6,11 @@ import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 import { CasingRenderService } from '../../services/render/casing-render.service';
 import { GeologiqService } from '../../services/3d/geologiq.service';
 
-import { GeologiqData } from '../../services/render/models/geologiq-data';
+import { CasingData, RiskData, WellboreData } from '../../services/render/models/geologiq-data';
 import { Model3D, Point, Tube } from '../../services/3d';
-import { Geologiq3dOptions } from '../../services/render/models/geologiq-3d-options';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
+import { Casing, Risk, Wellbore } from '../../services/render';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -23,8 +23,66 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
     private destroy$ = new Subject<void>();
 
     @Input() centerPosition?: Point;
-    @Input() models?: GeologiqData[];
-    @Input() options?: Geologiq3dOptions;
+
+    private _wellbores?: WellboreData;
+    @Input() set wellbores(value: Wellbore[] | WellboreData) {
+        if (value instanceof Array) {
+            this._wellbores = {
+                wellbores: value ?? [],
+                config: this._wellbores?.config
+            };
+        }
+        else {
+            this._wellbores = {
+                wellbores: value?.wellbores ?? [],
+                config: value?.config ?? this._wellbores?.config
+            };
+        }
+
+        if (this.geologiq3d) {
+            this.renderWellbores();
+        }
+    }
+
+    private _casings?: CasingData;
+    @Input() set casings(value: Casing[] | CasingData) {
+        if (value instanceof Array) {
+            this._casings = {
+                casings: value ?? [],
+                config: this._casings?.config
+            };
+        }
+        else {
+            this._casings = {
+                casings: value?.casings ?? [],
+                config: value?.config ?? this._casings?.config
+            };
+        }
+
+        if (this.geologiq3d) {
+            this.renderCasings();
+        }
+    }
+
+    private _risks?: RiskData;
+    @Input() set risks(value: Risk[] | RiskData) {
+        if (value instanceof Array) {
+            this._risks = {
+                risks: value ?? [],
+                config: this._risks?.config
+            };
+        }
+        else {
+            this._risks = {
+                risks: value?.risks ?? [],
+                config: value?.config ?? this._risks?.config
+            };
+        }
+
+        if (this.geologiq3d) {
+            this.renderRisks();
+        }
+    }
 
     @ViewChild(Geologiq3dComponent)
     geologiq3d?: Geologiq3dComponent;
@@ -59,34 +117,38 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
         ).subscribe();
     }
 
+    private renderWellbores() {
+        const wellbores = this._wellbores?.wellbores || [];
+        const tubes: Tube[] = this.wellboreRender.getTubes(wellbores, this._wellbores?.config);
+        tubes.forEach(tube => {
+            this.geologiq3d?.drawTube(tube);
+        });
+    }
+
+    private renderCasings() {
+        const casings = this._casings?.casings || [];
+        const models: Model3D[] = this.casingRender.getCasingModels(casings || [], this._casings?.config);
+        models.forEach(model => {
+            this.geologiq3d?.load3DModel(model);
+        });
+    }
+
+    private renderRisks() {
+        const risks = this._risks?.risks || [];
+        const models: Model3D[] = this.riskRender.getRiskModels(risks || [], this._risks?.config);
+        models.forEach(model => {
+            this.geologiq3d?.load3DModel(model);
+        });
+    }
+
     private refreshView() {
         if (!this.geologiq3d) {
             throw new Error('GeologiQ component not properly initialized.');
         }
 
-        const models = this.models || [];
-        // console.log('geo-3d: set models', { models: this.models, center: this.centerPosition });
-
-        const wellbores = models.map(item => item.wellbore);
-        const tubes: Tube[] = this.wellboreRender.getTubes(wellbores, this.options?.wellbore);
-        tubes.forEach(tube => {
-            this.geologiq3d?.drawTube(tube);
-        });
-        // console.log('geo-3d: render tubes', { tubes, models: this.models, center: this.centerPosition });
-
-        models.forEach(({ wellbore, casings, risks }) => {
-            let models: Model3D[] = this.casingRender.getCasingModels(casings || [], wellbore.id, this.options?.casing);
-            models.forEach(model => {
-                this.geologiq3d?.load3DModel(model);
-            });
-            // console.log('geo-3d: render casings', { casings: models, wellbore, models: this.models, center: this.centerPosition });
-
-            models = this.riskRender.getRiskModels(risks || [], wellbore.id, this.options?.risk);
-            models.forEach(model => {
-                this.geologiq3d?.load3DModel(model);
-            });
-            // console.log('geo-3d: render risks', { risks: models, wellbore, models: this.models, center: this.centerPosition });
-        });
+        this.renderWellbores();
+        this.renderCasings();
+        this.renderRisks();
     }
 
     reset() {
@@ -102,5 +164,6 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
 
     ngOnDestroy() {
         this.destroy$.next();
+        this.geologiq3d?.hide();
     }
 }

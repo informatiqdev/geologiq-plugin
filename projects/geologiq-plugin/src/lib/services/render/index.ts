@@ -1,3 +1,4 @@
+export * from './models/model-ref';
 export * from './models/casing';
 export * from './models/risk';
 export * from './models/wellbore';

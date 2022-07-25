@@ -13,7 +13,7 @@ export class RiskRenderService {
         this.loaded = new Map<string, Risk>();
     }
 
-    getRiskModels(risks: Risk[], parentId: string, options: Risk3dOptions | null = null): Model3D[] {
+    getRiskModels(risks: Risk[], options: Risk3dOptions | null = null): Model3D[] {
         const defaultConfig = {
             size: { x: 100, y: 100, z: 100 },
             color: { r: 1, g: 0, b: 0, a: 0 }
@@ -30,7 +30,7 @@ export class RiskRenderService {
                     type: 'sphere',
                     color: config.color ?? defaultConfig.color,
                     size: config.size ?? defaultConfig.size,
-                    parent: parentId,
+                    parent: risk.parent?.id,
                     offset: risk.depth
                 };
 

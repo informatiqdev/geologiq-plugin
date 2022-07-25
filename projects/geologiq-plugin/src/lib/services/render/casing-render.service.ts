@@ -13,7 +13,7 @@ export class CasingRenderService {
         this.loaded = new Map<string, Casing>();
     }
 
-    getCasingModels(casings: Casing[], parentId: string, options: Casing3dOptions | null = null): Model3D[] {
+    getCasingModels(casings: Casing[], options: Casing3dOptions | null = null): Model3D[] {
         const defaultConfig = {
             size: { x: 100, y: 100, z: 100 },
             color: { r: 0, g: 1, b: 0, a: 0 }
@@ -30,7 +30,7 @@ export class CasingRenderService {
                     type: 'cone',
                     color: config.color ?? defaultConfig.color,
                     size: config.size ?? defaultConfig.size,
-                    parent: parentId,
+                    parent: casing.parent?.id,
                     offset: casing.shoeDepthMd,
                     direction: 'align'
                 };

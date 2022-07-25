@@ -1,11 +1,5 @@
 import { Color, Point } from "../../3d";
 
-export interface Geologiq3dOptions {
-    wellbore?: Wellbore3dOptions;
-    casing?: Casing3dOptions;
-    risk?: Risk3dOptions;
-}
-
 export interface Wellbore3dOptions {
     default?: Wellbore3dConfig;
     wellbores?: Map<string, Wellbore3dConfig>
