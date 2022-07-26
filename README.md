@@ -8,5 +8,10 @@ InformatiQ GeologiQ 3D Engine provides a 3D engine tailored for render 3D models
 
 
 
+
+## How to build source
+
+
+
 ## License
 Check the license detail [here](https://github.com/informatiqdev/geologiq-plugin/LICENSE)
