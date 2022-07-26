@@ -1,6 +1,6 @@
 {
   "name": "@informatiq/geologiq-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "InformatiQ",
   "description": "InformatiQ GeologiQ 3D Engine provides a 3D engine tailored for render 3D models of offshore oil fields.",
   "peerDependencies": {
