@@ -1,11 +1,21 @@
 {
-  "name": "geologiq-plugin",
-  "version": "0.0.1",
+  "name": "@informatiq/geologiq-plugin",
+  "version": "11.1.0",
+  "author": {
+    "name": "InformatiQ"
+  },
+  "keywords": [ "informatiq", "geologiq", "angular", "ng", "unity" ],
+  "private": false,
+  "description": "Angular library for InformatiQ GeologiQ 3D Engine, which is a 3D engine tailored for rendering 3D models of offshore oil fields.",
   "peerDependencies": {
     "@angular/common": "^11.2.14",
     "@angular/core": "^11.2.14"
   },
   "dependencies": {
     "tslib": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/informatiqdev/geologiq-plugin.git"
   }
 }
