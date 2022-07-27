@@ -33,7 +33,7 @@ export class AppComponent implements OnInit, OnDestroy{
       throw new Error('Geologiq configuration not loaded.');
 
     // Load Geologiq plugin 
-    this._geologiqService.init('geologiq', config, this.onLoaded, this.onProgress);   
+    this._geologiqService.init('geologiq-3d', config, this.onLoaded, this.onProgress);   
   }
 
   /**
@@ -47,7 +47,6 @@ export class AppComponent implements OnInit, OnDestroy{
    * Callback to report progress of GeologiQ plugin loading
    * @param progress Progress of loading
    */
-  private onProgress(progress: number) {
-    console.log(`GeologiQ plugin loading: ${progress*100}%`);
+  private onProgress(progress: number) {    
   }
 }

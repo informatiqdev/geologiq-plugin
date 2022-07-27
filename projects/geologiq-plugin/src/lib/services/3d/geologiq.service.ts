@@ -88,9 +88,13 @@ export class GeologiqService implements OnDestroy {
 
         this.canvas = this._document.createElement('canvas');
         this.canvas.id = elementId;
-        this.canvas.classList.add("geologiq-plugin", "hidden");
-        this.canvas.style.width = 100 + '%';
-        this.canvas.style.height = 100 + '%';
+        this.canvas.classList.add("geologiq-3d", "hidden");
+
+        // Default Unity3D canvas size      
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.canvas.width  = this.canvas.offsetWidth;
+        this.canvas.height = this.canvas.offsetHeight;
 
         // Create new Unity 3D engine instance
         this.unityInstance = await createUnityInstance(this.canvas, config, (progress: number): void => {

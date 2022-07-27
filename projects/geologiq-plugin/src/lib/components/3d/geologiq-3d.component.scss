@@ -1,13 +1,13 @@
-.geologiq-plugin-container {
-    width: 100%;
-    height: 100%;
-    .geologiq-plugin {
-        position: absolute;
+.geologiq-3d-container {
+    position: relative;
+
+    .geologiq-3d {
+        position: relative;
         left: 0;
         top: 0;
-        width: 100vw;
+        width: 100%;
+        height: 100%;        
         border: none;
-        height: 100vh;
         margin: 0;
         padding: 0;
         display: block;
