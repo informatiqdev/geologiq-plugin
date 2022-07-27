@@ -1,24 +1,7 @@
-# GeologiqPlugin
+# InformatiQ GeologiQ 3D Engine (Release 4)
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.0.
+InformatiQ GeologiQ 3D Engine provides a 3D engine tailored for render 3D models of offshore oil fields.
 
-## Code scaffolding
+> This is a commercial product and requires a paid license for possession or use. InformatiQ's licensed software, including GeologiQ 3D Engine, is subject to the terms and conditions of InformatiQ's EULA. To acquire a license, contact InformatiQ (https://informatiq.no).
 
-Run `ng generate component component-name --project geologiq-plugin` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project geologiq-plugin`.
-> Note: Don't forget to add `--project geologiq-plugin` or else it will be added to the default project in your `angular.json` file. 
-
-## Build
-
-Run `ng build geologiq-plugin` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Publishing
-
-After building your library with `ng build geologiq-plugin`, go to the dist folder `cd dist/geologiq-plugin` and run `npm publish`.
-
-## Running unit tests
-
-Run `ng test geologiq-plugin` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+See [here](https://github.com/informatiqdev/geologiq-plugin) for documentation.
