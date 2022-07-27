@@ -12,8 +12,7 @@ import { GeologiqPluginComponent } from './components/render/geologiq-plugin.com
   imports: [
   ],
   exports: [
-    GeologiqPluginComponent,
-    // Geologiq3dComponent
+    GeologiqPluginComponent
   ]
 })
 export class GeologiqPluginModule {
