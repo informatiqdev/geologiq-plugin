@@ -25,6 +25,9 @@ export class Geologiq3dComponent {
     if (!canvas)
       throw new Error('GeologiQ canvas element not created.');
 
+    // remove the display none style which was added during initializing the unity instance
+    canvas.style.display = '';
+
     this._geologiqContainer.nativeElement.appendChild(canvas as Node);
     canvas.classList.remove('hidden');
   }

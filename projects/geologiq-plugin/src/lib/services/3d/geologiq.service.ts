@@ -43,7 +43,7 @@ export class GeologiqService implements OnDestroy {
   constructor(
     private zone: NgZone,
     @Inject(DOCUMENT) document: any) {
-      this._document = document;
+    this._document = document;
   }
 
   ngOnDestroy(): void {
@@ -93,11 +93,13 @@ export class GeologiqService implements OnDestroy {
         // Default Unity3D canvas size      
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
-        this.canvas.width  = this.canvas.offsetWidth;
+        this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
 
-        // NOTE: temporariliy attach the canvas to the document because in the latest unity version, it tries to add event listener
-        // to its parent document which fails if it is not attached to the document
+        // NOTE: attach the canvas to the document body and hide because in the latest unity version, 
+        // 1) it adds event listener and 2) gets view port size to fit the player.
+        // fails if it is not attached to the document
+        this.canvas.style.display = 'none';
         this._document.body.append(this.canvas);
 
         // Create new Unity 3D engine instance
@@ -105,9 +107,6 @@ export class GeologiqService implements OnDestroy {
           if (onProgress)
             onProgress(progress);
         });
-
-        // detach the camvas
-        this._document.body.removeChild(this.canvas); 
 
         // Indicate that Unity3D Engine is loaded
         this.loaded = true;
