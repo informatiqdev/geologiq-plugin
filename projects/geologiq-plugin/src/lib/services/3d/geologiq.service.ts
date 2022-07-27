@@ -96,11 +96,18 @@ export class GeologiqService implements OnDestroy {
         this.canvas.width  = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
 
+        // NOTE: temporariliy attach the canvas to the document because in the latest unity version, it tries to add event listener
+        // to its parent document which fails if it is not attached to the document
+        this._document.body.append(this.canvas);
+
         // Create new Unity 3D engine instance
         this.unityInstance = await createUnityInstance(this.canvas, config, (progress: number): void => {
           if (onProgress)
             onProgress(progress);
         });
+
+        // detach the camvas
+        this._document.body.removeChild(this.canvas); 
 
         // Indicate that Unity3D Engine is loaded
         this.loaded = true;
