@@ -38,12 +38,12 @@ export class GeologiqService implements OnDestroy {
   private canvas?: HTMLCanvasElement;
   private unityInstance?: UnityInstance;
 
-  private _document: Document;
+  private document: Document;
 
   constructor(
     private zone: NgZone,
     @Inject(DOCUMENT) document: any) {
-    this._document = document;
+    this.document = document;
   }
 
   ngOnDestroy(): void {
@@ -57,7 +57,7 @@ export class GeologiqService implements OnDestroy {
    */
   private loadScript(source: string): Observable<Event> {
     return new Observable(observer => {
-      const unityLoaderScript = this._document.createElement('script');
+      const unityLoaderScript = this.document.createElement('script');
       unityLoaderScript.type = 'text/javascript';
       unityLoaderScript.async = true;
       unityLoaderScript.src = source;
@@ -65,7 +65,7 @@ export class GeologiqService implements OnDestroy {
         observer.next(e);
       };
 
-      const head = this._document.getElementsByTagName('head')[0];
+      const head = this.document.getElementsByTagName('head')[0];
       head.appendChild(unityLoaderScript);
     });
   }
@@ -86,21 +86,19 @@ export class GeologiqService implements OnDestroy {
           }
         };
 
-        this.canvas = this._document.createElement('canvas');
+        this.canvas = this.document.createElement('canvas');
         this.canvas.id = elementId;
         this.canvas.classList.add("geologiq-3d", "hidden");
 
         // Default Unity3D canvas size      
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
-        this.canvas.width = this.canvas.offsetWidth;
-        this.canvas.height = this.canvas.offsetHeight;
 
         // NOTE: attach the canvas to the document body and hide because in the latest unity version, 
         // 1) it adds event listener and 2) gets view port size to fit the player.
         // fails if it is not attached to the document
         this.canvas.style.display = 'none';
-        this._document.body.append(this.canvas);
+        this.document.body.append(this.canvas);
 
         // Create new Unity 3D engine instance
         this.unityInstance = await createUnityInstance(this.canvas, config, (progress: number): void => {

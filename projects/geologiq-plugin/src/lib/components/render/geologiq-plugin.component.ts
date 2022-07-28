@@ -23,6 +23,8 @@ import { Casing, Risk, Wellbore } from '../../services/render';
 export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDestroy {
     private destroy$ = new Subject<void>();
 
+    @Input() maintainAspectRatio = true;
+
     @Input() centerPosition?: Point;
 
     private _wellbores?: WellboreData;

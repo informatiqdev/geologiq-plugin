@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 
 import { GeologiqService } from '../../services/3d/geologiq.service';
 import { Tube, Model3D, Point } from '../../services/3d';
@@ -11,60 +11,72 @@ import { Tube, Model3D, Point } from '../../services/3d';
 export class Geologiq3dComponent {
 
   @ViewChild('geologiqcontainer')
-  private _geologiqContainer?: ElementRef;
+  private geologiqContainer?: ElementRef;
+
+  @Input() maintainAspectRatio = true;
 
   constructor(
-    private _geologiqService: GeologiqService) {
+    private geologiqService: GeologiqService) {
   }
 
   show() {
-    if (!this._geologiqContainer)
+    if (!this.geologiqContainer)
       throw new Error('show must be called in AfterViewInit.');
 
-    const canvas = this._geologiqService.canvasElement;
+    const canvas = this.geologiqService.canvasElement;
     if (!canvas)
       throw new Error('GeologiQ canvas element not created.');
+
+    const element = this.geologiqContainer.nativeElement;
+    element.classList.remove('keep-aspect-ratio', 'follow-parent');
+    const className = this.maintainAspectRatio
+      ? 'keep-aspect-ratio'
+      : 'follow-parent';
+    element.classList.add(className);
 
     // remove the display none style which was added during initializing the unity instance
     canvas.style.display = '';
 
-    this._geologiqContainer.nativeElement.appendChild(canvas as Node);
+    element.appendChild(canvas as Node);
     canvas.classList.remove('hidden');
   }
 
   hide() {
-    if (!this._geologiqContainer)
+    if (!this.geologiqContainer)
       throw new Error('show must be called in AfterViewInit.');
 
-    const canvas = this._geologiqService.canvasElement;
+    const canvas = this.geologiqService.canvasElement;
     if (!canvas)
       throw new Error('GeologiQ canvas element not created.');
 
-    this._geologiqContainer.nativeElement.remove(canvas as Node);
+    const element = this.geologiqContainer.nativeElement;
+
+    element.remove(canvas as Node);
     canvas.classList.add('hidden');
+    element.classList.remove('keep-aspect-ratio', 'follow-parent');
   }
 
   createView(view: Point) {
-    this._geologiqService.send('ContentManager', 'CreateView', view);
+    this.geologiqService.send('ContentManager', 'CreateView', view);
   }
 
   toggleOcean(show: boolean) {
-    this._geologiqService.send('ContentManager', show ? 'ShowOcean' : 'HideOcean');
+    this.geologiqService.send('ContentManager', show ? 'ShowOcean' : 'HideOcean');
   }
 
   toggleSeabed(show: boolean) {
-    this._geologiqService.send('ContentManager', show ? 'ShowSeabed' : 'HideSeabed');
+    this.geologiqService.send('ContentManager', show ? 'ShowSeabed' : 'HideSeabed');
   }
 
   drawTube(tube: Tube) {
-    this._geologiqService.send('ContentManager', 'DrawTube', tube);
+    this.geologiqService.send('ContentManager', 'DrawTube', tube);
   }
 
   load3DModel(model: Model3D) {
-    this._geologiqService.send('ContentManager', 'Load3DModel', model);
+    this.geologiqService.send('ContentManager', 'Load3DModel', model);
   }
 
   clear() {
-    this._geologiqService.send('ContentManager', 'ClearView');
+    this.geologiqService.send('ContentManager', 'ClearView');
   }
 }

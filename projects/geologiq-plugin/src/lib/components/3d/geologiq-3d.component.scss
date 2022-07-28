@@ -1,5 +1,20 @@
 .geologiq-3d-container {
     position: relative;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    border: none;
+    background-color: transparent;
+
+    &.keep-aspect-ratio{
+        width: auto;
+        height: auto;
+    }
+
+    &.follow-parent{
+        width: 100%;
+        height: 100%;
+    }
 
     .geologiq-3d {
         position: relative;
@@ -10,6 +25,7 @@
         border: none;
         margin: 0;
         padding: 0;
+        line-height: 0;
         display: block;
         background-color: transparent;
         -webkit-user-select: none; /* Chrome all / Safari all */
