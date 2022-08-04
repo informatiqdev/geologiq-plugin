@@ -6,11 +6,11 @@ export const environment = {
   production: false,
   config: {
     geologiq: {
-      loaderUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.loader.js',
-      dataUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.data.gz',
-      frameworkUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.framework.js.gz',
-      codeUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.wasm.gz',
-      productVersion: '4.0.0-a.9'     
+      loaderUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.loader.js',
+      dataUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.data.gz',
+      frameworkUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.framework.js.gz',
+      codeUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.wasm.gz',
+      productVersion: '4.0.0-a.13'
     }
   }
 };

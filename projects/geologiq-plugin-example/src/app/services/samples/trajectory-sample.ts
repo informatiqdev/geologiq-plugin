@@ -1090,9 +1090,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 AH",
         "wellCategory": "geopilot",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         }
     },
     {
@@ -2976,9 +2976,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 BY2H",
         "wellCategory": "oilproducer",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         }
     },
     {
@@ -3683,9 +3683,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 H",
         "wellCategory": "geopilot",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         }       
     },
     {
@@ -5405,9 +5405,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 BY1HT2",
         "wellCategory": "oilproducer",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         }
     },
     {
@@ -6488,9 +6488,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 BY1H",
         "wellCategory": "oilproducer",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         }       
     },
     {
@@ -8453,9 +8453,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 BY3H",
         "wellCategory": "oilproducer",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         }       
     },
     {
@@ -9356,9 +9356,9 @@ export const TrajectorySample: Trajectory[] = [
         "name": "Test-A-7 HT2",   
         "wellCategory": "geopilot",
         "wellHeadPosition": {
-            "x": 400000.000,
+            "x": 454379.42,
             "y": 0,
-            "z": 6000000.000
+            "z": 6531276.39
         } 
     }
 ];

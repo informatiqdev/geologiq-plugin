@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 
 import { GeologiqService } from '../../services/3d/geologiq.service';
-import { Tube, Model3D, Point } from '../../services/3d';
+import { Tube, Model3D, Point, SurfaceModel } from '../../services/3d';
 
 @Component({
   selector: 'geologiq-3d',
@@ -74,6 +74,15 @@ export class Geologiq3dComponent {
 
   load3DModel(model: Model3D) {
     this.geologiqService.send('ContentManager', 'Load3DModel', model);
+  }
+
+  loadSurface(surface: SurfaceModel) {
+    this.geologiqService.send('ContentManager', 'LoadSurface', surface);
+  }
+
+  lookAtContent(id: string | string[]) {
+    const ids: string[] = id instanceof Array ? id : [id];
+    this.geologiqService.send('ContentManager', 'LookAtContent', { content: ids });
   }
 
   clear() {

@@ -1,6 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { from, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 import { GeologiqConfig, GeologiqService } from 'geologiq-plugin';
@@ -13,7 +11,7 @@ import { GeologiqConfig, GeologiqService } from 'geologiq-plugin';
 export class AppComponent implements OnInit, OnDestroy{
 
   constructor(
-    private _geologiqService: GeologiqService
+    private geologiqService: GeologiqService
   ) {    
   }
 
@@ -33,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy{
       throw new Error('Geologiq configuration not loaded.');
 
     // Load Geologiq plugin 
-    this._geologiqService.init('geologiq-3d', config, this.onLoaded, this.onProgress);   
+    this.geologiqService.init('geologiq-3d', config, this.onLoaded, this.onProgress);   
   }
 
   /**
@@ -47,6 +45,7 @@ export class AppComponent implements OnInit, OnDestroy{
    * Callback to report progress of GeologiQ plugin loading
    * @param progress Progress of loading
    */
-  private onProgress(progress: number) {    
+  private onProgress(progress: number) {   
+    // console.log(`GeologiQ plugin ${(100 * progress).toFixed(2)}% loaded.`); 
   }
 }

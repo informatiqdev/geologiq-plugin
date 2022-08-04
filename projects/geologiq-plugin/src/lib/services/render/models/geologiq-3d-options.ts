@@ -29,3 +29,11 @@ export interface Casing3dConfig {
     size?: Point;
     color?: Color;
 }
+
+export interface Surface3dOptions {
+    default?: Surface3dConfig;
+    surfaces?: Map<string, Surface3dConfig>
+}
+
+export interface Surface3dConfig {
+}

@@ -7,11 +7,12 @@ import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 import { CasingRenderService } from '../../services/render/casing-render.service';
 import { GeologiqService } from '../../services/3d/geologiq.service';
 
-import { CasingData, RiskData, WellboreData } from '../../services/render/models/geologiq-data';
-import { Model3D, Point, Tube } from '../../services/3d';
+import { CasingData, RiskData, SurfaceData, WellboreData } from '../../services/render/models/geologiq-data';
+import { Model3D, Point, SurfaceModel, Tube } from '../../services/3d';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
-import { Casing, Risk, Wellbore } from '../../services/render';
+import { Casing, Risk, Wellbore, Surface } from '../../services/render';
+import { SurfaceRenderService } from '../../services/render/surface-render.service';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -87,6 +88,26 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
         }
     }
 
+    private _surfaces?: SurfaceData;
+    @Input() set surfaces(value: Surface[] | SurfaceData) {
+        if (value instanceof Array) {
+            this._surfaces = {
+                surfaces: value ?? [],
+                config: this._surfaces?.config
+            };
+        }
+        else {
+            this._surfaces = {
+                surfaces: value?.surfaces ?? [],
+                config: value?.config ?? this._surfaces?.config
+            };
+        }
+
+        if (this.geologiq3d) {
+            this.renderSurfaces();
+        }
+    }
+
     @ViewChild(Geologiq3dComponent)
     geologiq3d?: Geologiq3dComponent;
 
@@ -95,6 +116,7 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
         private riskRender: RiskRenderService,
         private casingRender: CasingRenderService,
         private wellboreRender: WellboreRenderService,
+        private surfaceRender: SurfaceRenderService,
     ) { }
 
     ngOnChanges() {
@@ -144,6 +166,14 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
         });
     }
 
+    private renderSurfaces() {
+        const surfaces = this._surfaces?.surfaces || [];
+        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this._surfaces?.config);
+        models.forEach(model => {
+            this.geologiq3d?.loadSurface(model);
+        });
+    }
+
     private refreshView() {
         if (!this.geologiq3d) {
             throw new Error('GeologiQ component not properly initialized.');
@@ -152,6 +182,7 @@ export class GeologiqPluginComponent implements AfterViewInit, OnChanges, OnDest
         this.renderWellbores();
         this.renderCasings();
         this.renderRisks();
+        this.renderSurfaces();
     }
 
     reset() {

@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
-import { Casing, Point, Risk, Wellbore } from 'geologiq-plugin';
+import { Casing, Point, Risk, Wellbore, Surface } from 'geologiq-plugin';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { CasingService, ExperienceService, Trajectory, TrajectoryService } from '../../../services';
+import { CasingService, ExperienceService, Trajectory, TrajectoryService, SurfaceService } from '../../../services';
 
 @Component({
     selector: 'app-wellbore',
@@ -17,17 +17,19 @@ export class WellboreComponent implements OnInit, OnDestroy {
     displayOcean: boolean = true;
 
     center: Point = {
-        x: 400000.000,
+        x: 454379.42,
         y: 0,
-        z: 6000000.000
+        z: 6531276.39
     };
 
     wellbores: Wellbore[] = [];
     casings: Casing[] = [];
     risks: Risk[] = [];
+    surfaces: Surface[] = [];
 
     constructor(
         // Remote APIs
+        private surfaceService: SurfaceService,
         private casingService: CasingService,
         private experienceService: ExperienceService,
         private trajectoryService: TrajectoryService,
@@ -35,6 +37,20 @@ export class WellboreComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.surfaceService.get().pipe(
+            tap(surfaces => {
+                this.surfaces = surfaces.map(sur => {
+                    const surface: Surface = {
+                        id: sur.id,
+                        url: sur.url
+                    };
+
+                    return surface;
+                });
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
+
         this.trajectoryService.get().pipe(
             take(1),
             tap((trajectories) => {

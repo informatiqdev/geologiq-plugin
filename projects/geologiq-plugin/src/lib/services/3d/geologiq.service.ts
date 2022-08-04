@@ -194,7 +194,9 @@ export class GeologiqService implements OnDestroy {
       if (!parameter) {
         this.unityInstance.SendMessage(objectName, methodName);
       } else {
-        this.unityInstance.SendMessage(objectName, methodName, JSON.stringify(parameter));
+        const isString = typeof parameter === 'string';
+        const payload = isString ? parameter : JSON.stringify(parameter);
+        this.unityInstance.SendMessage(objectName, methodName, payload);
       }
     });
   }
