@@ -24,13 +24,14 @@ export class WellboreRenderService {
             .map(wellbore => {
                 const config: Wellbore3dConfig = options?.wellbores?.get(wellbore.id) || options?.default || defaultConfig;
 
+                const head = Point.getPoint(wellbore.wellHeadPosition);
                 const points: Point[] = wellbore.points?.map(Point.getPoint) ?? [];
                 const tube: Tube = {
                     id: wellbore.id,
                     name: wellbore.name ?? '',
                     points: points,
                     lengths: wellbore.md,
-                    startPosition: Point.getPoint(wellbore.wellHeadPosition),
+                    startPosition: head,
                     radius: config.radius ?? defaultConfig.radius,
                     color: config.color ?? defaultConfig.color
                 };

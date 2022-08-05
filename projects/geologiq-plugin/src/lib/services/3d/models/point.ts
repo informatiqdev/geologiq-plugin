@@ -1,7 +1,7 @@
 export class Point {
-    x: number = 0;
-    y: number = 0;
-    z: number = 0;
+    x: number = 0; // easting
+    y: number = 0; // tvd
+    z: number = 0; // northing
 
     static isPoint(data: any): data is Point {
         if (data && typeof data.x === 'number' && typeof data.y === 'number' && typeof data.z === 'number') {
@@ -11,17 +11,22 @@ export class Point {
         return false;
     }
 
-    static getPoint(current?: Point | number[]): Point {
-        if (Point.isPoint(current)) {
-            return current;
+    /**
+     * 
+     * @param point if number array then [easting, tvd, northing]
+     * @returns 
+     */
+    static getPoint(point?: Point | number[]): Point {
+        if (Point.isPoint(point)) {
+            return { ...point };
         }
 
-        const point: Point = {
-            x: current ? current[0] : 0,
-            y: current ? current[1] : 0,
-            z: current ? current[2] : 0
+        const current: Point = {
+            x: point ? point[0] : 0,
+            y: point ? point[1] : 0,
+            z: point ? point[2] : 0
         };
 
-        return point;
+        return current;
     };
 }

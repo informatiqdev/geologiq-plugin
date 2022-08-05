@@ -16,12 +16,13 @@ export class WellboreService {
         let url = `${this.baseUrl}/services/fdp/wellbores/${id}.json?apiKey=${apiKey}`;
         return this.http.get<any[]>(url).pipe(
             map(([traj]) => {
+                const head = traj.well?.wellHeadPosition?.utm?.geometry?.coordinates ?? [0, 0, 0];
                 const wellbore: Wellbore = {
                     id,
                     name: traj.wellbore?.name ?? '',
                     md: traj.md,
                     points: traj.points,
-                    wellHeadPosition: traj.well?.wellHeadPosition?.utm?.geometry?.coordinates ?? [0, 0, 0]
+                    wellHeadPosition: [head[0], head[2], head[1]]
                 };
 
                 return wellbore;
