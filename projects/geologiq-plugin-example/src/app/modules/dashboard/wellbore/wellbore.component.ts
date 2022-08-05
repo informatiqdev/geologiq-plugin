@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
-import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent, WellboreId, SurfaceId } from 'geologiq-plugin';
 import { Component, OnDestroy, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent, DsisWellbore, GeologiqSurface } from 'geologiq-plugin';
 
 import { CasingService, ExperienceService, Trajectory, TrajectoryService, SurfaceService } from '../../../services';
 
@@ -75,14 +75,14 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        const wellbores: WellboreId[] = [{
+        const wellbores: DsisWellbore[] = [{
             wellId: 'kWMQ399xmE',
             wellboreId: 'fS7kuW5ZYd',
             defSurveyHeaderId: 'C4PvR'
         }];
-        this.geologiq?.drawWellbores(wellbores);
+        this.geologiq?.drawDsisWellbores(wellbores);
 
-        const surfaces: SurfaceId[] = [
+        const surfaces: GeologiqSurface[] = [
             {
                 id: "03aa12e4-5d73-4b79-baa8-0fee806327bf",
                 name: "TUtsira"
@@ -170,8 +170,8 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe();
     }
 
-    onElementClicked(id: string) {
-        console.log(`clicked element: ${id}`)
+    onElementClicked(element: DsisWellbore | GeologiqSurface | string) {
+        console.log(`clicked element`, element);
     }
 
     zoom(id: string) {

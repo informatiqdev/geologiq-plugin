@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
 import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
@@ -7,7 +7,7 @@ import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 import { CasingRenderService } from '../../services/render/casing-render.service';
 import { GeologiqService } from '../../services/3d/geologiq.service';
 
-import { CasingData, RiskData, SurfaceData, SurfaceId, WellboreData, WellboreId } from '../../services/render/models/geologiq-data';
+import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore } from '../../services/render/models/geologiq-data';
 import { Model3D, Point, SurfaceModel, Tube } from '../../services/3d';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
@@ -31,7 +31,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     @Input() maintainAspectRatio = true;
 
-    @Output() elementClicked = new EventEmitter<string>();
+    @Output() elementClicked = new EventEmitter<DsisWellbore | GeologiqSurface | string>();
 
     private _position?: Point;
     @Input() set centerPosition(value: Point | undefined) {
@@ -135,8 +135,8 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     @ViewChild(Geologiq3dComponent)
     private geologiq3d?: Geologiq3dComponent;
 
-    private loadWellboreData$ = new Subject<{ wellbores: WellboreId[], casings: boolean; risks: boolean }>();
-    private loadSurfaces$ = new Subject<SurfaceId[]>();
+    private loadWellboreData$ = new BehaviorSubject<{ wellbores: DsisWellbore[], casings?: boolean; risks?: boolean }>({ wellbores: [] });
+    private loadSurfaces$ = new BehaviorSubject<GeologiqSurface[]>([]);
 
     constructor(
         private geologiq: GeologiqService,
@@ -165,7 +165,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
         this.loadWellboreData$.pipe(
             switchMap(data => {
-                const ids = data.wellbores.map(wb => `${wb.wellboreId}-${wb.defSurveyHeaderId}`);
+                const ids = data.wellbores.map(DsisWellbore.getId);
                 const wellbores$ = ids.map(id => this.wellboreService.getWellbore(id, this.apiKey));
                 const casings$ = data.casings
                     ? ids.map(id => this.casingService.getCasingsByWellboreId(id, this.apiKey))
@@ -240,11 +240,11 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
-    drawSurfaces(surfaces: SurfaceId[]) {
+    drawSurfaces(surfaces: GeologiqSurface[]) {
         this.loadSurfaces$.next(surfaces);
     }
 
-    drawWellbores(wellbores: WellboreId[], drawCasings = true, drawRisks = true) {
+    drawDsisWellbores(wellbores: DsisWellbore[], drawCasings = true, drawRisks = true) {
         this.loadWellboreData$.next({ wellbores, casings: drawCasings, risks: drawRisks });
     }
 
@@ -316,38 +316,33 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
         if ('contentClicked' === e.data.type) {
             const id: string = e.data.object.id;
+
+            const surface = this.loadSurfaces$.getValue()?.find(s => s.id == id);
+            if (null != surface) {
+                this.elementClicked.emit(surface);
+                return;
+            }
+
+            const wellbore = this.loadWellboreData$.getValue()?.wellbores?.find(wb => DsisWellbore.getId(wb) === id);
+            if (null != wellbore) {
+                this.elementClicked.emit(wellbore);
+                return;
+            }
+
+            const casing = this._casings?.casings?.find(w => w.id === id);
+            if (null != casing) {
+                this.elementClicked.emit(casing.id);
+                return;
+            }
+
+            const risk = this._risks?.risks?.find(w => w.id === id);
+            if (null != risk) {
+                this.elementClicked.emit(risk.id);
+                return;
+            }
+
+            console.warn(`No element found with id: ${id}`);
             this.elementClicked.emit(id);
-
-            // setTimeout(() => {
-            //     console.log('element clicked', { id });
-            //     this.displayClickedElementInfo(id);
-            // }, 20);
-        }
-    }
-
-    private displayClickedElementInfo(id: string) {
-        const surface = this._surfaces?.surfaces?.find(s => s.id == id);
-        if (null != surface) {
-            alert(`Surface ${id} is clicked`);
-            return;
-        }
-
-        const wellbore = this._wellbores?.wellbores?.find(w => w.id === id);
-        if (null != wellbore) {
-            alert(`Wellbore '${wellbore.name}' is clicked`);
-            return;
-        }
-
-        const casing = this._casings?.casings?.find(w => w.id === id);
-        if (null != casing) {
-            alert(`Casing '${casing.name}' is clicked`);
-            return;
-        }
-
-        const risk = this._risks?.risks?.find(w => w.id === id);
-        if (null != risk) {
-            alert(`Risk '${risk.title}' is clicked`);
-            return;
         }
     }
 
