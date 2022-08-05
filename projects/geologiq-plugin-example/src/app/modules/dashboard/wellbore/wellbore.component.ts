@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
-import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent } from 'geologiq-plugin';
+import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent, WellboreId, SurfaceId } from 'geologiq-plugin';
 import { Component, OnDestroy, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CasingService, ExperienceService, Trajectory, TrajectoryService, SurfaceService } from '../../../services';
@@ -75,13 +75,30 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        this.geologiq?.drawWellbores(['fS7kuW5ZYd']);
+        const wellbores: WellboreId[] = [{
+            wellId: 'kWMQ399xmE',
+            wellboreId: 'fS7kuW5ZYd',
+            defSurveyHeaderId: 'C4PvR'
+        }];
+        this.geologiq?.drawWellbores(wellbores);
 
-        const surfaces = [
-            '03aa12e4-5d73-4b79-baa8-0fee806327bf',
-            '0af82424-8e22-4e08-a898-34158a7ced89',
-            '32bb32a4-4990-4c2b-8fc5-bd260025406f',
-            '38f9f06b-dbd7-4c9a-abf6-dc074cfffc15',
+        const surfaces: SurfaceId[] = [
+            {
+                id: "03aa12e4-5d73-4b79-baa8-0fee806327bf",
+                name: "TUtsira"
+            },
+            {
+                id: "0af82424-8e22-4e08-a898-34158a7ced89",
+                name: "Top_Skagerrak 1_structural_surface"
+            },
+            {
+                id: "32bb32a4-4990-4c2b-8fc5-bd260025406f",
+                name: "Top Alluvial fan depth surface"
+            },
+            {
+                id: "38f9f06b-dbd7-4c9a-abf6-dc074cfffc15",
+                name: "TSkade"
+            }
         ];
         this.geologiq?.drawSurfaces(surfaces);
     }

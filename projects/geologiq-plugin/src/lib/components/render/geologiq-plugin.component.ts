@@ -1,13 +1,13 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filter, take, takeUntil, tap } from 'rxjs/operators';
+import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 
 import { CasingRenderService } from '../../services/render/casing-render.service';
 import { GeologiqService } from '../../services/3d/geologiq.service';
 
-import { CasingData, RiskData, SurfaceData, WellboreData } from '../../services/render/models/geologiq-data';
+import { CasingData, RiskData, SurfaceData, SurfaceId, WellboreData, WellboreId } from '../../services/render/models/geologiq-data';
 import { Model3D, Point, SurfaceModel, Tube } from '../../services/3d';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
@@ -133,6 +133,9 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     @ViewChild(Geologiq3dComponent)
     geologiq3d?: Geologiq3dComponent;
 
+    private loadWellboreData$ = new Subject<{ wellbores: WellboreId[], casings: boolean; risks: boolean }>();
+    private loadSurfaces$ = new Subject<SurfaceId[]>();
+
     constructor(
         private geologiq: GeologiqService,
         private riskRender: RiskRenderService,
@@ -157,6 +160,65 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             }),
             takeUntil(this.destroy$)
         ).subscribe();
+
+        this.loadWellboreData$.pipe(
+            switchMap(data => {
+                const ids = data.wellbores.map(wb => `${wb.wellboreId}-${wb.defSurveyHeaderId}`);
+                const wellbores$ = ids.map(id => this.wellboreService.getWellbore(id, this.apiKey));
+                const casings$ = data.casings
+                    ? ids.map(id => this.casingService.getCasingsByWellboreId(id, this.apiKey))
+                    : [of([] as Casing[])];
+                const risks$ = data.risks
+                    ? ids.map(id => this.riskService.getRisksByWellboreId(id, this.apiKey))
+                    : [of([] as Risk[])];
+
+                return forkJoin([
+                    forkJoin(wellbores$),
+                    forkJoin(casings$),
+                    forkJoin(risks$),
+                    this.geologiq.activated$.pipe(take(1))
+                ]);
+            }),
+            tap({
+                next: ([wellbores, casings, risks]) => {
+                    if (null == this.centerPosition) {
+                        const head = wellbores[0]?.wellHeadPosition;
+                        this.centerPosition = Point.getPoint(head);
+                    }
+                    this.setWellbores(wellbores);
+                    this.setCasings((casings as any).flat());
+                    this.setRisks((risks as any).flat());
+
+                    if (this.geologiq3d) {
+                        this.render$.next();
+                        this.refreshView();
+                    }
+                }
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
+
+        this.loadSurfaces$.pipe(
+            switchMap(surfaces => {
+                const surfaces$ = surfaces.map(surface => this.surfaceService.getSurface(surface.id, this.apiKey));
+
+                return forkJoin([
+                    forkJoin(surfaces$),
+                    this.geologiq.activated$.pipe(take(1))
+                ]);
+            }),
+            tap({
+                next: ([surfaces]) => {
+                    this.setSurfaces(surfaces);
+
+                    if (this.geologiq3d) {
+                        this.render$.next();
+                        this.refreshView();
+                    }
+                }
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
     }
 
     ngOnChanges() {
@@ -176,53 +238,12 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
-    drawSurfaces(ids: string[]) {
-        const surfaces$ = ids.map(id => this.surfaceService.getSurface(id, this.apiKey));
-        forkJoin([
-            forkJoin(surfaces$),
-            this.geologiq.activated$.pipe(take(1))
-        ]).pipe(
-            tap({
-                next: ([surfaces]) => {
-                    this.setSurfaces(surfaces);
-                    this.renderSurfaces();
-                }
-            })
-        ).subscribe();
+    drawSurfaces(surfaces: SurfaceId[]) {
+        this.loadSurfaces$.next(surfaces);
     }
 
-    drawWellbores(ids: string[], drawCasings = true, drawExperiences = true) {
-        const wellbores$ = ids.map(id => this.wellboreService.getWellbore(id, this.apiKey));
-        const casings$ = drawCasings
-            ? ids.map(id => this.casingService.getCasingsByWellboreId(id, this.apiKey))
-            : [of([] as Casing[])];
-        const risks$ = drawExperiences
-            ? ids.map(id => this.riskService.getRisksByWellboreId(id, this.apiKey))
-            : [of([] as Risk[])];
-
-        forkJoin([
-            forkJoin(wellbores$),
-            forkJoin(casings$),
-            forkJoin(risks$),
-            this.geologiq.activated$.pipe(take(1))
-        ]).pipe(
-            tap({
-                next: ([wellbores, casings, risks]) => {
-                    if (null == this.centerPosition) {
-                        const head = wellbores[0]?.wellHeadPosition;
-                        this.centerPosition = Point.getPoint(head);
-                    }
-                    this.setWellbores(wellbores);
-                    this.setCasings((casings as any).flat());
-                    this.setRisks((risks as any).flat());
-
-                    if (this.geologiq3d) {
-                        this.render$.next();
-                        this.refreshView();
-                    }
-                }
-            }),
-        ).subscribe();
+    drawWellbores(wellbores: WellboreId[], drawCasings = true, drawRisks = true) {
+        this.loadWellboreData$.next({ wellbores, casings: drawCasings, risks: drawRisks });
     }
 
     private renderWellbores() {
