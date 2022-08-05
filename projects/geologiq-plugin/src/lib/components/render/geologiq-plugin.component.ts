@@ -133,7 +133,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     @ViewChild(Geologiq3dComponent)
-    geologiq3d?: Geologiq3dComponent;
+    private geologiq3d?: Geologiq3dComponent;
 
     private loadWellboreData$ = new Subject<{ wellbores: WellboreId[], casings: boolean; risks: boolean }>();
     private loadSurfaces$ = new Subject<SurfaceId[]>();
@@ -246,6 +246,10 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     drawWellbores(wellbores: WellboreId[], drawCasings = true, drawRisks = true) {
         this.loadWellboreData$.next({ wellbores, casings: drawCasings, risks: drawRisks });
+    }
+
+    zoomToElement(id: string | string[]) {
+        this.geologiq3d?.lookAtContent(id);
     }
 
     private renderWellbores() {

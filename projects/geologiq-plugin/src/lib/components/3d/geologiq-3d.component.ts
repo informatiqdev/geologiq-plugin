@@ -82,7 +82,7 @@ export class Geologiq3dComponent {
 
   lookAtContent(id: string | string[]) {
     const ids: string[] = id instanceof Array ? id : [id];
-    this.geologiqService.send('ContentManager', 'LookAtContent', { content: ids });
+    this.geologiqService.send('CameraManager', 'LookAtContent', { content: ids });
   }
 
   clear() {
