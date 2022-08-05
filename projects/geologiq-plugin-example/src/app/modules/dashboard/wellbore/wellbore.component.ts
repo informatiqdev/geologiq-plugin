@@ -17,6 +17,11 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
     displayOcean: boolean = true;
 
     center?: Point;
+    // center?: Point = {
+    //     x: 454379.42,
+    //     y: 0,
+    //     z: 6531276.39
+    // };
 
     wellbores: Wellbore[] = [];
     casings: Casing[] = [];
@@ -168,5 +173,9 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
             takeUntil(this.destroy$)
         ).subscribe();
+    }
+
+    onElementClicked(id: string) {
+        console.log(`clicked element: ${id}`)
     }
 }

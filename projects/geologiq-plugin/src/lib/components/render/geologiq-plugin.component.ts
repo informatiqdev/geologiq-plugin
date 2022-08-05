@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
@@ -30,6 +30,8 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     private render$ = new Subject<void>();
 
     @Input() maintainAspectRatio = true;
+
+    @Output() elementClicked = new EventEmitter<string>();
 
     private _position?: Point;
     @Input() set centerPosition(value: Point | undefined) {
@@ -299,6 +301,50 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.riskRender.clear();
         this.surfaceRender.clear();
         this.geologiq3d.clear();
+    }
+
+    @HostListener('window:message', ['$event'])
+    onMessage: any = (e: MessageEvent) => {
+        // Only accept messages from below same origin
+        if (e.origin !== window.location.origin || !e.data?.object?.id) {
+            return;
+        }
+
+        if ('contentClicked' === e.data.type) {
+            const id: string = e.data.object.id;
+            this.elementClicked.emit(id);
+
+            setTimeout(() => {
+                console.log('element clicked', { id });
+                this.displayClickedElementInfo(id);
+            }, 20);
+        }
+    }
+
+    private displayClickedElementInfo(id: string) {
+        const surface = this._surfaces?.surfaces?.find(s => s.id == id);
+        if (null != surface) {
+            alert(`Surface ${id} is clicked`);
+            return;
+        }
+
+        const wellbore = this._wellbores?.wellbores?.find(w => w.id === id);
+        if (null != wellbore) {
+            alert(`Wellbore '${wellbore.name}' is clicked`);
+            return;
+        }
+
+        const casing = this._casings?.casings?.find(w => w.id === id);
+        if (null != casing) {
+            alert(`Casing '${casing.name}' is clicked`);
+            return;
+        }
+
+        const risk = this._risks?.risks?.find(w => w.id === id);
+        if (null != risk) {
+            alert(`Risk '${risk.title}' is clicked`);
+            return;
+        }
     }
 
     ngOnDestroy() {
