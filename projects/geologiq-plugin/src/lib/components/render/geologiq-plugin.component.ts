@@ -248,7 +248,16 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.loadWellboreData$.next({ wellbores, casings: drawCasings, risks: drawRisks });
     }
 
-    zoomToElement(id: string | string[]) {
+    zoomToElement(element: DsisWellbore | GeologiqSurface | string) {
+        let id: string;
+        if (DsisWellbore.isDsisWellbore(element)) {
+            id = DsisWellbore.getId(element);
+        } else if (GeologiqSurface.isGeologiqSurface(element)) {
+            id = element.id;
+        } else {
+            id = element;
+        }
+
         this.geologiq3d?.lookAtContent(id);
     }
 
