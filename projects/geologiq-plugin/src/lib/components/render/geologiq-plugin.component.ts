@@ -309,7 +309,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     @HostListener('window:message', ['$event'])
     onMessage: any = (e: MessageEvent) => {
-        // Only accept messages from below same origin
+        // Only accept messages from same origin
         if (e.origin !== window.location.origin || !e.data?.object?.id) {
             return;
         }
@@ -318,10 +318,10 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             const id: string = e.data.object.id;
             this.elementClicked.emit(id);
 
-            setTimeout(() => {
-                console.log('element clicked', { id });
-                this.displayClickedElementInfo(id);
-            }, 20);
+            // setTimeout(() => {
+            //     console.log('element clicked', { id });
+            //     this.displayClickedElementInfo(id);
+            // }, 20);
         }
     }
 
