@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
-import { Casing, Point, Risk, Wellbore, Surface } from 'geologiq-plugin';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent } from 'geologiq-plugin';
+import { Component, OnDestroy, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CasingService, ExperienceService, Trajectory, TrajectoryService, SurfaceService } from '../../../services';
 
@@ -10,22 +10,21 @@ import { CasingService, ExperienceService, Trajectory, TrajectoryService, Surfac
     templateUrl: './wellbore.component.html',
     styleUrls: ['./wellbore.component.scss']
 })
-export class WellboreComponent implements OnInit, OnDestroy {
+export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     displaySeabed: boolean = true;
     displayOcean: boolean = true;
 
-    center: Point = {
-        x: 454379.42,
-        y: 0,
-        z: 6531276.39
-    };
+    center?: Point;
 
     wellbores: Wellbore[] = [];
     casings: Casing[] = [];
     risks: Risk[] = [];
     surfaces: Surface[] = [];
+
+    @ViewChild('plugin', { static: false })
+    geologiq?: GeologiqPluginComponent;
 
     constructor(
         // Remote APIs
@@ -37,42 +36,54 @@ export class WellboreComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.surfaceService.get().pipe(
-            tap(surfaces => {
-                this.surfaces = surfaces.map(sur => {
-                    const surface: Surface = {
-                        id: sur.id,
-                        url: sur.url
-                    };
+        // this.surfaceService.get().pipe(
+        //     tap(surfaces => {
+        //         this.surfaces = surfaces.map(sur => {
+        //             const surface: Surface = {
+        //                 id: sur.id,
+        //                 url: sur.url
+        //             };
 
-                    return surface;
-                });
-            }),
-            takeUntil(this.destroy$)
-        ).subscribe();
+        //             return surface;
+        //         });
+        //     }),
+        //     takeUntil(this.destroy$)
+        // ).subscribe();
 
-        this.trajectoryService.get().pipe(
-            take(1),
-            tap((trajectories) => {
-                this.wellbores = trajectories.map(trajectory => {
-                    const wellbore: Wellbore = {
-                        id: trajectory.id,
-                        name: trajectory.name,
-                        md: trajectory.md,
-                        points: trajectory.points,
-                        wellHeadPosition: trajectory.wellHeadPosition
-                    };
+        // this.trajectoryService.get().pipe(
+        //     take(1),
+        //     tap((trajectories) => {
+        //         this.wellbores = trajectories.map(trajectory => {
+        //             const wellbore: Wellbore = {
+        //                 id: trajectory.id,
+        //                 name: trajectory.name,
+        //                 md: trajectory.md,
+        //                 points: trajectory.points,
+        //                 wellHeadPosition: trajectory.wellHeadPosition
+        //             };
 
-                    return wellbore;
-                });
+        //             return wellbore;
+        //         });
 
-                trajectories.forEach(trajectory => {
-                    this.loadCasings(trajectory);
-                    this.loadRisks(trajectory);
-                });
-            }),
-            takeUntil(this.destroy$)
-        ).subscribe();
+        //         trajectories.forEach(trajectory => {
+        //             this.loadCasings(trajectory);
+        //             this.loadRisks(trajectory);
+        //         });
+        //     }),
+        //     takeUntil(this.destroy$)
+        // ).subscribe();
+    }
+
+    ngAfterViewInit(): void {
+        this.geologiq?.drawWellbores(['fS7kuW5ZYd']);
+
+        const surfaces = [
+            '03aa12e4-5d73-4b79-baa8-0fee806327bf',
+            '0af82424-8e22-4e08-a898-34158a7ced89',
+            '32bb32a4-4990-4c2b-8fc5-bd260025406f',
+            '38f9f06b-dbd7-4c9a-abf6-dc074cfffc15',
+        ];
+        this.geologiq?.drawSurfaces(surfaces);
     }
 
     ngOnDestroy(): void {

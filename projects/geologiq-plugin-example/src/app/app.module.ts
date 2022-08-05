@@ -9,12 +9,15 @@ import { LayoutModule } from './layouts/layout.module';
 import { PagesModule } from './pages/pages.module';
 
 import { GeologiqPluginModule } from 'geologiq-plugin';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    HttpClientModule,
+
     AppLoadingModule,
 
     BrowserModule,

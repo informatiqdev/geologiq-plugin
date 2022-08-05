@@ -9,13 +9,11 @@ import { SurfaceModel } from '../3d';
 export class SurfaceRenderService {
     private loaded = new Map<string, Surface>();
 
-    private readonly apiKey = 'las9812mnf329asjdsf812lkj';
-
     clear() {
         this.loaded = new Map<string, Surface>();
     }
 
-    getSurfaceModels(surfaces: Surface[], options: Surface3dOptions | null = null): SurfaceModel[] {
+    getSurfaceModels(surfaces: Surface[], options: Surface3dOptions | null = null, apiKey: string = ''): SurfaceModel[] {
         const defaultConfig = {
             size: { x: 100, y: 100, z: 100 },
             color: { r: 0, g: 1, b: 0, a: 0 }
@@ -35,7 +33,7 @@ export class SurfaceRenderService {
                 const model: SurfaceModel = {
                     baseUrl: url.replace(filename, ''),
                     filename,
-                    apiKey: this.apiKey
+                    apiKey
                 };
 
                 return model;

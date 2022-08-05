@@ -11,6 +11,9 @@ export const environment = {
       frameworkUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.framework.js.gz',
       codeUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.wasm.gz',
       productVersion: '4.0.0-a.13'
+    },
+    services: {
+      apiKey: 'las9812mnf329asjdsf812lkj'
     }
   }
 };

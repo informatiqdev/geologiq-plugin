@@ -7,6 +7,9 @@ export const environment = {
       frameworkUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.framework.js.gz',
       codeUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.wasm.gz',
       productVersion: '4.0.0-a.9' 
+    },
+    services: {
+      apiKey: 'las9812mnf329asjdsf812lkj'
     }
   }
 };

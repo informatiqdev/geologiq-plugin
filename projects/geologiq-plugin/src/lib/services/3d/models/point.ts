@@ -10,4 +10,18 @@ export class Point {
 
         return false;
     }
+
+    static getPoint(current?: Point | number[]): Point {
+        if (Point.isPoint(current)) {
+            return current;
+        }
+
+        const point: Point = {
+            x: current ? current[0] : 0,
+            y: current ? current[1] : 0,
+            z: current ? current[2] : 0
+        };
+
+        return point;
+    };
 }
