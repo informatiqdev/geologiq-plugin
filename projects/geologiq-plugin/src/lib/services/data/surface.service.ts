@@ -1,13 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
+import { environment } from "../../environment";
 import { Surface } from "../render/models/surface";
 
 @Injectable({
     providedIn: 'root'
 })
 export class SurfaceService {
-    private baseUrl = 'https://localhost:7214'
+    private baseUrl = environment.services.fdp;
 
     constructor(private http: HttpClient) { }
 

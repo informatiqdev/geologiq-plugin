@@ -1,13 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { environment } from "../../environment";
 import { Infrastructure } from "../render/models/infrastructure";
 
 @Injectable({
     providedIn: 'root'
 })
 export class InfrastructureService {
-    private baseUrl = 'https://localhost:7214'
+    private baseUrl = environment.services.fdp;
 
     constructor(private http: HttpClient) { }
 

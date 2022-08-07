@@ -2,13 +2,14 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { environment } from "../../environment";
 import { Casing } from "../render/models/casing";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CasingService {
-    private baseUrl = 'https://localhost:7214'
+    private baseUrl = environment.services.fdp;
 
     constructor(private http: HttpClient) { }
 
