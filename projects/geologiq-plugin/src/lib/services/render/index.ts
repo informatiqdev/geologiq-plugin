@@ -5,4 +5,5 @@ export * from './models/wellbore';
 export * from './models/surface';
 export * from './models/infrastructure';
 export * from './models/geologiq-data';
+export * from './models/element-click-event';
 export * from './models/geologiq-3d-options';

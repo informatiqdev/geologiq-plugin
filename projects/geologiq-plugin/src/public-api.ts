@@ -11,6 +11,8 @@ export * from './lib/services/render/models/wellbore';
 export * from './lib/services/render/models/casing';
 export * from './lib/services/render/models/risk';
 export * from './lib/services/render/models/surface';
+export * from './lib/services/render/models/infrastructure';
+export * from './lib/services/render/models/element-click-event';
 export * from './lib/services/render/models/model-ref';
 export * from './lib/services/render/models/geologiq-data';
 export * from './lib/services/render/models/geologiq-3d-options';

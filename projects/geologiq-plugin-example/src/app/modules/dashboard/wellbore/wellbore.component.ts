@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent, DsisWellbore, GeologiqSurface } from 'geologiq-plugin';
+import { Casing, Point, Risk, Wellbore, Surface, GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickvent } from 'geologiq-plugin';
 
 import { CasingService, ExperienceService, Trajectory, TrajectoryService, SurfaceService } from '../../../services';
 
@@ -175,8 +175,8 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe();
     }
 
-    onElementClicked(element: DsisWellbore | GeologiqSurface | string) {
-        console.log(`clicked element`, element);
+    onElementClick(event: ElementClickvent) {
+        console.log(`clicked element`, event);
     }
 
     zoom(id: string) {

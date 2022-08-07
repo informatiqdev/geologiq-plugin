@@ -10,7 +10,7 @@ import { GeologiqService } from '../../services/3d/geologiq.service';
 import { Model3D, Point, SurfaceModel, Tube } from '../../services/3d';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
-import { Casing, Risk, Wellbore, Surface, Infrastructure } from '../../services/render';
+import { Casing, Risk, Wellbore, Surface, Infrastructure, ElementClickvent as ElementClickEvent } from '../../services/render';
 import { WellboreService } from '../../services/data/wellbore.service';
 import { RiskService } from '../../services/data/risk.service';
 import { CasingService } from '../../services/data/casing.service';
@@ -33,7 +33,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     @Input() maintainAspectRatio = true;
 
-    @Output() elementClicked = new EventEmitter<DsisWellbore | GeologiqSurface | string>();
+    @Output() elementClick = new EventEmitter<ElementClickEvent>();
 
     private _position?: Point;
     @Input() set centerPosition(value: Point | undefined) {
@@ -392,30 +392,36 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
             const surface = this.loadSurfaces$.getValue()?.find(s => s.id == id);
             if (null != surface) {
-                this.elementClicked.emit(surface);
+                this.elementClick.emit({ type: 'surface', data: surface });
                 return;
             }
 
             const wellbore = this.loadWellboreData$.getValue()?.wellbores?.find(wb => DsisWellbore.getId(wb) === id);
             if (null != wellbore) {
-                this.elementClicked.emit(wellbore);
+                this.elementClick.emit({ type: 'wellbore', data: wellbore });
                 return;
             }
 
             const casing = this._casings?.casings?.find(w => w.id === id);
             if (null != casing) {
-                this.elementClicked.emit(casing.id);
+                this.elementClick.emit({ type: 'casing', data: casing.id });
                 return;
             }
 
             const risk = this._risks?.risks?.find(w => w.id === id);
             if (null != risk) {
-                this.elementClicked.emit(risk.id);
+                this.elementClick.emit({ type: 'risk', data: risk.id });
+                return;
+            }
+
+            const infrastructure = this._structures?.infrastructures?.find(w => w.id === id);
+            if (null != infrastructure) {
+                this.elementClick.emit({ type: 'infrastructure', data: infrastructure.id });
                 return;
             }
 
             console.warn(`No element found with id: ${id}`);
-            this.elementClicked.emit(id);
+            //  this.elementClicked.emit(id);
         }
     }
 
