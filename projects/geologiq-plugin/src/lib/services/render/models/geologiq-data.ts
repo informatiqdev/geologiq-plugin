@@ -2,7 +2,8 @@ import { Risk } from './risk';
 import { Casing } from './casing';
 import { Wellbore } from './wellbore';
 import { Surface } from './surface';
-import { Casing3dOptions, Risk3dOptions, Surface3dConfig, Wellbore3dOptions } from './geologiq-3d-options';
+import { Infrastructure } from './infrastructure';
+import { Casing3dOptions, Infrastructure3dConfig, Risk3dOptions, Surface3dConfig, Wellbore3dOptions } from './geologiq-3d-options';
 
 export class GeologiqSurface {
     id: string = '';
@@ -45,4 +46,9 @@ export interface RiskData {
 export interface SurfaceData {
     surfaces: Surface[];
     config?: Surface3dConfig;
+}
+
+export interface InfrastructureData {
+    infrastructures: Infrastructure[];
+    config?: Infrastructure3dConfig;
 }

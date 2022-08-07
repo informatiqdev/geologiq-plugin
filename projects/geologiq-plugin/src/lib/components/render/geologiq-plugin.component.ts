@@ -7,16 +7,18 @@ import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 import { CasingRenderService } from '../../services/render/casing-render.service';
 import { GeologiqService } from '../../services/3d/geologiq.service';
 
-import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore } from '../../services/render/models/geologiq-data';
 import { Model3D, Point, SurfaceModel, Tube } from '../../services/3d';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
-import { Casing, Risk, Wellbore, Surface } from '../../services/render';
+import { Casing, Risk, Wellbore, Surface, Infrastructure } from '../../services/render';
 import { WellboreService } from '../../services/data/wellbore.service';
 import { RiskService } from '../../services/data/risk.service';
 import { CasingService } from '../../services/data/casing.service';
 import { SurfaceRenderService } from '../../services/render/surface-render.service';
 import { SurfaceService } from '../../services/data/surface.service';
+import { InfrastructureService } from '../../services/data/infrastructure.service';
+import { InfrastructureRenderService } from '../../services/render/infrastrucure-render.service';
+import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData } from '../../services/render/models/geologiq-data';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -132,11 +134,35 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         }
     }
 
+    private _structures?: InfrastructureData;
+    @Input() set ifrastructures(value: Infrastructure[] | InfrastructureData) {
+        this.setInfrastructures(value);
+
+        if (this.geologiq3d) {
+            this.renderInfrastructures();
+        }
+    }
+    private setInfrastructures(value: Infrastructure[] | InfrastructureData) {
+        if (value instanceof Array) {
+            this._structures = {
+                infrastructures: value ?? [],
+                config: this._structures?.config
+            };
+        }
+        else {
+            this._structures = {
+                infrastructures: value?.infrastructures ?? [],
+                config: value?.config ?? this._structures?.config
+            };
+        }
+    }
+
     @ViewChild(Geologiq3dComponent)
     private geologiq3d?: Geologiq3dComponent;
 
     private loadWellboreData$ = new BehaviorSubject<{ wellbores: DsisWellbore[], casings?: boolean; risks?: boolean }>({ wellbores: [] });
     private loadSurfaces$ = new BehaviorSubject<GeologiqSurface[]>([]);
+    private loadInfrastructures$ = new BehaviorSubject<string[]>([]);
 
     constructor(
         private geologiq: GeologiqService,
@@ -148,6 +174,8 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         private riskService: RiskService,
         private surfaceRender: SurfaceRenderService,
         private surfaceService: SurfaceService,
+        private infrastructureService: InfrastructureService,
+        private infrastructureRender: InfrastructureRenderService,
     ) { }
 
     ngOnInit() {
@@ -215,7 +243,29 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
                     if (this.geologiq3d) {
                         this.render$.next();
-                        this.refreshView();
+                        this.renderSurfaces();
+                    }
+                }
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
+
+        this.loadInfrastructures$.pipe(
+            switchMap(structures => {
+                const structures$ = structures.map(structure => this.infrastructureService.getInfrastructure(structure, this.apiKey));
+
+                return forkJoin([
+                    forkJoin(structures$),
+                    this.geologiq.activated$.pipe(take(1))
+                ]);
+            }),
+            tap({
+                next: ([structures]) => {
+                    this.setInfrastructures(structures);
+
+                    if (this.geologiq3d) {
+                        this.render$.next();
+                        this.renderInfrastructures();
                     }
                 }
             }),
@@ -240,6 +290,10 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
+    drawInfrastructures(infrastructures: string[]) {
+        this.loadInfrastructures$.next(infrastructures);
+    }
+
     drawSurfaces(surfaces: GeologiqSurface[]) {
         this.loadSurfaces$.next(surfaces);
     }
@@ -259,6 +313,14 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         }
 
         this.geologiq3d?.lookAtContent(id);
+    }
+
+    private renderInfrastructures() {
+        const structures = this._structures?.infrastructures || [];
+        const models: Model3D[] = this.infrastructureRender.getInfrastructureModels(structures || [], this.apiKey, this._structures?.config);
+        models.forEach(model => {
+            this.geologiq3d?.load3DModel(model);
+        });
     }
 
     private renderWellbores() {
@@ -287,7 +349,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     private renderSurfaces() {
         const surfaces = this._surfaces?.surfaces || [];
-        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this._surfaces?.config, this.apiKey);
+        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this.apiKey, this._surfaces?.config);
         models.forEach(model => {
             this.geologiq3d?.loadSurface(model);
         });
@@ -302,6 +364,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.renderCasings();
         this.renderRisks();
         this.renderSurfaces();
+        this.renderInfrastructures();
     }
 
     reset() {
@@ -313,6 +376,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.casingRender.clear();
         this.riskRender.clear();
         this.surfaceRender.clear();
+        this.infrastructureRender.clear();
         this.geologiq3d.clear();
     }
 

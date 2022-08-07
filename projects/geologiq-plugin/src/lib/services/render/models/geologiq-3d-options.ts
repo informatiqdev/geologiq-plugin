@@ -37,3 +37,11 @@ export interface Surface3dOptions {
 
 export interface Surface3dConfig {
 }
+
+export interface Infrastructure3dOptions {
+    default?: Infrastructure3dConfig;
+    infrastructures?: Map<string, Infrastructure3dConfig>
+}
+
+export interface Infrastructure3dConfig {
+}

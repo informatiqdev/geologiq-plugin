@@ -13,7 +13,7 @@ export class SurfaceRenderService {
         this.loaded = new Map<string, Surface>();
     }
 
-    getSurfaceModels(surfaces: Surface[], options: Surface3dOptions | null = null, apiKey: string = ''): SurfaceModel[] {
+    getSurfaceModels(surfaces: Surface[], apiKey: string, options: Surface3dOptions | null = null): SurfaceModel[] {
         const defaultConfig = {
             size: { x: 100, y: 100, z: 100 },
             color: { r: 0, g: 1, b: 0, a: 0 }
