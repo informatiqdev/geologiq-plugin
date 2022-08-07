@@ -103,7 +103,7 @@ export class WellboreComponent implements OnInit, AfterViewInit, OnDestroy {
         this.geologiq?.drawSurfaces(surfaces);
 
         const structures = [
-            '332a1795-8ca6-440c-8975-543c671cd21c'
+            '332a1795-8ca6-440c-8975-543c671cd21c' // ivar aasen platform
         ];
         this.geologiq?.drawInfrastructures(structures);
     }
