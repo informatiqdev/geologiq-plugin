@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 
 import { GeologiqService } from '../../services/3d/geologiq.service';
 import { Tube, Model3D, Point, SurfaceModel } from '../../services/3d';
+import { Ocean } from '../../services/render';
 
 @Component({
   selector: 'geologiq-3d',
@@ -63,6 +64,10 @@ export class Geologiq3dComponent {
 
   toggleOcean(show: boolean) {
     this.geologiqService.send('ContentManager', show ? 'ShowOcean' : 'HideOcean');
+  }
+  
+  defineOcean(ocean: Ocean) {
+    this.geologiqService.send('ContentManager', 'DefineOcean', ocean);
   }
 
   toggleSeabed(show: boolean) {

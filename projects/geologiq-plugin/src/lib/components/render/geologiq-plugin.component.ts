@@ -18,7 +18,7 @@ import { SurfaceRenderService } from '../../services/render/surface-render.servi
 import { SurfaceService } from '../../services/data/surface.service';
 import { InfrastructureService } from '../../services/data/infrastructure.service';
 import { InfrastructureRenderService } from '../../services/render/infrastrucure-render.service';
-import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData } from '../../services/render/models/geologiq-data';
+import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData, Ocean } from '../../services/render/models/geologiq-data';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -178,6 +178,8 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                         const head = wellbores[0]?.wellHeadPosition;
                         this.centerPosition = Point.getPoint(head);
                     }
+
+
                     this.setWellbores(wellbores);
                     this.setCasings((casings as any).flat());
                     this.setRisks((risks as any).flat());
@@ -263,6 +265,17 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     drawDsisWellbores(wellbores: DsisWellbore[], drawCasings = true, drawRisks = true) {
         this.loadWellboreData$.next({ wellbores, casings: drawCasings, risks: drawRisks });
+    }
+
+    drawOcean(ocean: Ocean) {
+        this.geologiq.activated$.pipe(
+            take(1),
+            tap(() => {
+                this.geologiq3d?.defineOcean(ocean);
+                this.geologiq3d?.toggleOcean(true);
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
     }
 
     zoomToElement(element: DsisWellbore | GeologiqSurface | string) {

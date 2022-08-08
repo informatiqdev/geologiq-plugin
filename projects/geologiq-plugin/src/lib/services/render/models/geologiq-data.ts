@@ -4,12 +4,19 @@ import { Wellbore } from './wellbore';
 import { Surface } from './surface';
 import { Infrastructure } from './infrastructure';
 import { Casing3dOptions, Infrastructure3dConfig, Risk3dOptions, Surface3dConfig, Wellbore3dOptions } from './geologiq-3d-options';
+import { Point } from '../../3d';
+
+export interface Ocean {
+    size: Point;
+    position: Point;
+    rotation: number;
+}
 
 export class GeologiqSurface {
     id: string = '';
     name?: string = '';
 
-    static isGeologiqSurface(data: any): data is GeologiqSurface{
+    static isGeologiqSurface(data: any): data is GeologiqSurface {
         return data && data.id && data.name;
     }
 }
@@ -23,7 +30,7 @@ export class DsisWellbore {
         return `${wellbore.wellboreId}-${wellbore.defSurveyHeaderId}`;
     }
 
-    static isDsisWellbore(data: any): data is DsisWellbore{
+    static isDsisWellbore(data: any): data is DsisWellbore {
         return data && data.wellId && data.wellboreId && data.defSurveyHeaderId;
     }
 }
