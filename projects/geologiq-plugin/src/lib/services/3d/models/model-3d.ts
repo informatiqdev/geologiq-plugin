@@ -12,5 +12,6 @@ export class Model3D {
     size?: Point;
     parent?: string;
     offset?: number;
-    direction?: string;    
+    direction?: string;
+    apiKey?: string;
 }

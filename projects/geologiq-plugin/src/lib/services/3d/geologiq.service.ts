@@ -40,6 +40,8 @@ export class GeologiqService implements OnDestroy {
 
   private document: Document;
 
+  config?: GeologiqConfig;
+
   constructor(
     private zone: NgZone,
     @Inject(DOCUMENT) document: any) {
@@ -132,6 +134,8 @@ export class GeologiqService implements OnDestroy {
    * @param onProgress Callback indicating progress of GeologiQ 3D engine loading process
    */
   init(elementId: string, opts: GeologiqConfig, onLoaded?: () => void, onProgress?: (number: number) => void) {
+    this.config = opts;
+
     const config: GeologiqConfig = {
       ...opts,
       loaderUrl: opts.loaderUrl.replace('[version]', opts.productVersion),

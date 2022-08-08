@@ -1,19 +1,22 @@
-import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { environment } from "../../environment";
+import { GeologiqService } from "../3d/geologiq.service";
 import { Surface } from "../render/models/surface";
 
 @Injectable({
     providedIn: 'root'
 })
 export class SurfaceService {
-    private baseUrl = environment.services.fdp;
+    private baseUrl: string;
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private geologiqService: GeologiqService
+    ) {
+        this.baseUrl = this.geologiqService.config?.fdp?.baseUrl ?? '';
+    }
 
-    getSurface(id: string, apiKey: string): Observable<Surface> {
-        let url = `${this.baseUrl}/services/fdp/surfaces/${id}/surface.json`;
+    getSurface(id: string): Observable<Surface> {
+        const url = `${this.baseUrl}/services/fdp/surfaces/${id}/surface.json`;
         const surface: Surface = {
             id,
             url

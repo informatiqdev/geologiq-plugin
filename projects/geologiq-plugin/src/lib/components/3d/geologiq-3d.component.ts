@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 
 import { GeologiqService } from '../../services/3d/geologiq.service';
 import { Tube, Model3D, Point, SurfaceModel } from '../../services/3d';
@@ -13,10 +13,11 @@ export class Geologiq3dComponent {
   @ViewChild('geologiqcontainer')
   private geologiqContainer?: ElementRef;
 
-  @Input() maintainAspectRatio = true;
+  private maintainAspectRatio = false;
 
   constructor(
     private geologiqService: GeologiqService) {
+      this.maintainAspectRatio = this.geologiqService.config?.maintainAspectRatio === true;
   }
 
   show() {

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
 import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
@@ -31,26 +31,16 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     private destroy$ = new Subject<void>();
     private render$ = new Subject<void>();
 
-    @Input() maintainAspectRatio = true;
-
     @Output() elementClick = new EventEmitter<ElementClickEvent>();
 
     private _position?: Point;
-    @Input() set centerPosition(value: Point | undefined) {
+    private set centerPosition(value: Point | undefined) {
         this._position = value;
         this.render$.next();
     }
 
-    @Input() apiKey: string = '';
 
     private _wellbores?: WellboreData;
-    @Input() set wellbores(value: Wellbore[] | WellboreData) {
-        this.setWellbores(value);
-
-        if (this.geologiq3d) {
-            this.renderWellbores();
-        }
-    }
     private setWellbores(value: Wellbore[] | WellboreData) {
         if (value instanceof Array) {
             this._wellbores = {
@@ -67,12 +57,6 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private _casings?: CasingData;
-    @Input() set casings(value: Casing[] | CasingData) {
-        this.setCasings(value);
-        if (this.geologiq3d) {
-            this.renderCasings();
-        }
-    }
     private setCasings(value: Casing[] | CasingData) {
         if (value instanceof Array) {
             this._casings = {
@@ -89,13 +73,6 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private _risks?: RiskData;
-    @Input() set risks(value: Risk[] | RiskData) {
-        this.setRisks(value);
-
-        if (this.geologiq3d) {
-            this.renderRisks();
-        }
-    }
     private setRisks(value: Risk[] | RiskData) {
         if (value instanceof Array) {
             this._risks = {
@@ -112,13 +89,6 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private _surfaces?: SurfaceData;
-    @Input() set surfaces(value: Surface[] | SurfaceData) {
-        this.setSurfaces(value);
-
-        if (this.geologiq3d) {
-            this.renderSurfaces();
-        }
-    }
     private setSurfaces(value: Surface[] | SurfaceData) {
         if (value instanceof Array) {
             this._surfaces = {
@@ -135,13 +105,6 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private _structures?: InfrastructureData;
-    @Input() set ifrastructures(value: Infrastructure[] | InfrastructureData) {
-        this.setInfrastructures(value);
-
-        if (this.geologiq3d) {
-            this.renderInfrastructures();
-        }
-    }
     private setInfrastructures(value: Infrastructure[] | InfrastructureData) {
         if (value instanceof Array) {
             this._structures = {
@@ -194,12 +157,12 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.loadWellboreData$.pipe(
             switchMap(data => {
                 const ids = data.wellbores.map(DsisWellbore.getId);
-                const wellbores$ = ids.map(id => this.wellboreService.getWellbore(id, this.apiKey));
+                const wellbores$ = ids.map(id => this.wellboreService.getWellbore(id));
                 const casings$ = data.casings
-                    ? ids.map(id => this.casingService.getCasingsByWellboreId(id, this.apiKey))
+                    ? ids.map(id => this.casingService.getCasingsByWellboreId(id))
                     : [of([] as Casing[])];
                 const risks$ = data.risks
-                    ? ids.map(id => this.riskService.getRisksByWellboreId(id, this.apiKey))
+                    ? ids.map(id => this.riskService.getRisksByWellboreId(id))
                     : [of([] as Risk[])];
 
                 return forkJoin([
@@ -230,7 +193,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
         this.loadSurfaces$.pipe(
             switchMap(surfaces => {
-                const surfaces$ = surfaces.map(surface => this.surfaceService.getSurface(surface.id, this.apiKey));
+                const surfaces$ = surfaces.map(surface => this.surfaceService.getSurface(surface.id));
 
                 return forkJoin([
                     forkJoin(surfaces$),
@@ -252,7 +215,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
         this.loadInfrastructures$.pipe(
             switchMap(structures => {
-                const structures$ = structures.map(structure => this.infrastructureService.getInfrastructure(structure, this.apiKey));
+                const structures$ = structures.map(structure => this.infrastructureService.getInfrastructure(structure));
 
                 return forkJoin([
                     forkJoin(structures$),
@@ -317,7 +280,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     private renderInfrastructures() {
         const structures = this._structures?.infrastructures || [];
-        const models: Model3D[] = this.infrastructureRender.getInfrastructureModels(structures || [], this.apiKey, this._structures?.config);
+        const models: Model3D[] = this.infrastructureRender.getInfrastructureModels(structures || [], this._structures?.config);
         models.forEach(model => {
             this.geologiq3d?.load3DModel(model);
         });
@@ -349,7 +312,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     private renderSurfaces() {
         const surfaces = this._surfaces?.surfaces || [];
-        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this.apiKey, this._surfaces?.config);
+        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this._surfaces?.config);
         models.forEach(model => {
             this.geologiq3d?.loadSurface(model);
         });
