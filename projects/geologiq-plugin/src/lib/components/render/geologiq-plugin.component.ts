@@ -179,7 +179,6 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                         this.centerPosition = Point.getPoint(head);
                     }
 
-
                     this.setWellbores(wellbores);
                     this.setCasings((casings as any).flat());
                     this.setRisks((risks as any).flat());
@@ -299,25 +298,25 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         });
     }
 
-    private renderWellbores() {
+    private async renderWellbores() {
         const wellbores = this._wellbores?.wellbores || [];
-        const tubes: Tube[] = this.wellboreRender.getTubes(wellbores, this._wellbores?.config);
+        const tubes: Tube[] = await this.wellboreRender.getTubes(wellbores, this._wellbores?.config);
         tubes.forEach(tube => {
             this.geologiq3d?.drawTube(tube);
         });
     }
 
-    private renderCasings() {
+    private async renderCasings() {
         const casings = this._casings?.casings || [];
-        const models: Model3D[] = this.casingRender.getCasingModels(casings || [], this._casings?.config);
+        const models: Model3D[] = await this.casingRender.getCasingModels(casings || [], this._casings?.config);
         models.forEach(model => {
             this.geologiq3d?.load3DModel(model);
         });
     }
 
-    private renderRisks() {
+    private async renderRisks() {
         const risks = this._risks?.risks || [];
-        const models: Model3D[] = this.riskRender.getRiskModels(risks || [], this._risks?.config);
+        const models: Model3D[] = await this.riskRender.getRiskModels(risks || [], this._risks?.config);
         models.forEach(model => {
             this.geologiq3d?.load3DModel(model);
         });

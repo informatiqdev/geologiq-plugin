@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Wellbore } from './models/wellbore';
 import { Point, Tube } from '../3d';
 import { Wellbore3dConfig, Wellbore3dOptions } from './models/geologiq-3d-options';
+import { ConfigService } from '../data/config.service';
 
 @Injectable({
     providedIn: 'root'
@@ -9,14 +10,17 @@ import { Wellbore3dConfig, Wellbore3dOptions } from './models/geologiq-3d-option
 export class WellboreRenderService {
     private loaded = new Map<string, Wellbore>();
 
+    constructor(private configService: ConfigService) { }
+
     clear() {
         this.loaded = new Map<string, Wellbore>();
     }
 
-    getTubes(wellbores: Wellbore[], options: Wellbore3dOptions | null = null): Tube[] {
+    async getTubes(wellbores: Wellbore[], options: Wellbore3dOptions | null = null): Promise<Tube[]> {
+        const vConfig = await this.configService.getVisualConfig().toPromise();
         const defaultConfig = {
-            radius: 3,
-            color: { r: 0.48, g: 0.88, b: 0.42, a: 0 }
+            radius: vConfig.wellbore?.radius ?? 3,
+            color: vConfig.wellbore?.color ?? { r: 0.48, g: 0.88, b: 0.42, a: 0 }
         };
 
         const tubes: Tube[] = wellbores

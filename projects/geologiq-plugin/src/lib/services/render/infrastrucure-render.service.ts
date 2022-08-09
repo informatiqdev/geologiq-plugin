@@ -37,7 +37,7 @@ export class InfrastructureRenderService {
                     id: structure.id,
                     name: structure.name,
                     url: structure.url,
-                    type: "custom",
+                    type: 'custom',
                     position: structure.position,
                     rotation: structure.rotation,
                     size: structure.size,
