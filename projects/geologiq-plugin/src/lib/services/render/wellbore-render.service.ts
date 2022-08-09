@@ -26,7 +26,9 @@ export class WellboreRenderService {
         const tubes: Tube[] = wellbores
             .filter(wb => !this.loaded.has(wb.id) || wb !== this.loaded.get(wb.id))
             .map(wellbore => {
-                const config: Wellbore3dConfig = options?.wellbores?.get(wellbore.id) || options?.default || defaultConfig;
+                const config = vConfig.wellbore?.configs
+                    ? vConfig.wellbore.configs[wellbore.id] ?? defaultConfig
+                    : defaultConfig;
 
                 const head = Point.getPoint(wellbore.wellHeadPosition);
                 const points: Point[] = wellbore.points?.map(Point.getPoint) ?? [];

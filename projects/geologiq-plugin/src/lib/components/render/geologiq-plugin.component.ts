@@ -1,5 +1,7 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter,
-    HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter,
+    HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild
+} from '@angular/core';
 import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
 import { catchError, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
@@ -11,7 +13,6 @@ import { GeologiqService } from '../../services/3d/geologiq.service';
 import { Model3D, Point, SurfaceModel, Tube } from '../../services/3d';
 import { RiskRenderService } from '../../services/render/risk-render.service';
 import { WellboreRenderService } from '../../services/render/wellbore-render.service';
-import { Casing, Risk, Wellbore, Surface, Infrastructure, ElementClickvent as ElementClickEvent } from '../../services/render';
 import { WellboreService } from '../../services/data/wellbore.service';
 import { RiskService } from '../../services/data/risk.service';
 import { CasingService } from '../../services/data/casing.service';
@@ -19,8 +20,10 @@ import { SurfaceRenderService } from '../../services/render/surface-render.servi
 import { SurfaceService } from '../../services/data/surface.service';
 import { InfrastructureService } from '../../services/data/infrastructure.service';
 import { InfrastructureRenderService } from '../../services/render/infrastrucure-render.service';
-import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData,
-    DsisWellbore, InfrastructureData, Ocean } from '../../services/render/models/geologiq-data';
+import {
+    CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData, Ocean
+} from '../../services/render/models/geologiq-data';
+import { Casing, Risk, Wellbore, Surface, Infrastructure, ElementClickEvent } from '../../services/render';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector

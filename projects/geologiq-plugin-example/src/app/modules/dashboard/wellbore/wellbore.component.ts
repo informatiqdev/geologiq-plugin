@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { Component, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
-import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickvent, Ocean } from 'geologiq-plugin';
+import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEvent, Ocean } from 'geologiq-plugin';
 
 
 @Component({
@@ -289,7 +289,7 @@ export class WellboreComponent implements AfterViewInit, OnDestroy {
         this.destroy$.unsubscribe();
     }
 
-    onElementClick(event: ElementClickvent) {
+    onElementClick(event: ElementClickEvent) {
         console.log(`clicked element`, event);
     }
 

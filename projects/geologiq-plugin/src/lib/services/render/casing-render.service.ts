@@ -26,7 +26,9 @@ export class CasingRenderService {
         return (casings || [])
             .filter(c => !this.loaded.has(c.id) || c !== this.loaded.get(c.id))
             .map(casing => {
-                const config: Casing3dConfig = options?.casings?.get(casing.id) || options?.default || defaultConfig;
+                const config = vConfig.casing?.configs
+                    ? vConfig.casing.configs[casing.id] ?? defaultConfig
+                    : defaultConfig;
 
                 const model: Model3D = {
                     id: casing.id,

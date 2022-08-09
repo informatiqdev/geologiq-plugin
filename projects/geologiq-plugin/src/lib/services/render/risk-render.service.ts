@@ -26,11 +26,13 @@ export class RiskRenderService {
         return (risks || [])
             .filter(r => !this.loaded.has(r.id) || r !== this.loaded.get(r.id))
             .map(risk => {
-                const config: Risk3dConfig = options?.risks?.get(risk.id) || options?.default || defaultConfig;
+                const config = vConfig.risk?.configs
+                    ? vConfig.risk.configs[risk.id] ?? defaultConfig
+                    : defaultConfig;
 
                 const model: Model3D = {
                     id: risk.id,
-                    name: risk.title || '',
+                    name: risk.title ?? '',
                     type: 'sphere',
                     color: config.color ?? defaultConfig.color,
                     size: config.size ?? defaultConfig.size,
