@@ -8,8 +8,13 @@ export interface GeologiqConfig {
     productName?: string;
     productVersion: string;
 
-    onProgress?: (number: number) => void;
+    fdp?: {
+        apiKey: string;
+        baseUrl: string;
+    };
+    maintainAspectRatio?: boolean;
+
+    onProgress?: (progress: number) => void;
     onRuntimeInitialized?: () => void;
-    onLoaded?: () => void;   
+    onLoaded?: () => void;
 }
-  

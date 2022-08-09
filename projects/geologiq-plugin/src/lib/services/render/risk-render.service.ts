@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Risk } from './models/risk';
 import { Model3D } from '../3d';
 import { Risk3dConfig, Risk3dOptions } from './models/geologiq-3d-options';
+import { ConfigService } from '../data/config.service';
 
 @Injectable({
     providedIn: 'root'
@@ -9,14 +10,17 @@ import { Risk3dConfig, Risk3dOptions } from './models/geologiq-3d-options';
 export class RiskRenderService {
     private loaded = new Map<string, Risk>();
 
-    clear() {
+    constructor(private configService: ConfigService) { }
+
+    clear(): void {
         this.loaded = new Map<string, Risk>();
     }
 
-    getRiskModels(risks: Risk[], options: Risk3dOptions | null = null): Model3D[] {
+    async getRiskModels(risks: Risk[], options: Risk3dOptions | null = null): Promise<Model3D[]> {
+        const vConfig = await this.configService.getVisualConfig().toPromise();
         const defaultConfig = {
-            size: { x: 100, y: 100, z: 100 },
-            color: { r: 1, g: 0, b: 0, a: 0 }
+            size: vConfig.risk?.size ?? { x: 20, y: 20, z: 20 },
+            color: vConfig.risk?.color ?? { r: 1, g: 0, b: 0, a: 0 }
         };
 
         return (risks || [])

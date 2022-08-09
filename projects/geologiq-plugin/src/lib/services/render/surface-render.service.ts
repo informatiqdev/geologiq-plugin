@@ -2,18 +2,24 @@ import { Injectable } from '@angular/core';
 import { Surface } from './models/surface';
 import { Surface3dConfig, Surface3dOptions } from './models/geologiq-3d-options';
 import { SurfaceModel } from '../3d';
+import { GeologiqService } from '../3d/geologiq.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SurfaceRenderService {
+    private apiKey: string;
     private loaded = new Map<string, Surface>();
 
-    clear() {
+    constructor(private geologiqService: GeologiqService) {
+        this.apiKey = this.geologiqService?.config?.fdp?.apiKey ?? '';
+    }
+
+    clear(): void {
         this.loaded = new Map<string, Surface>();
     }
 
-    getSurfaceModels(surfaces: Surface[], apiKey: string, options: Surface3dOptions | null = null): SurfaceModel[] {
+    getSurfaceModels(surfaces: Surface[], options: Surface3dOptions | null = null): SurfaceModel[] {
         const defaultConfig = {
             size: { x: 100, y: 100, z: 100 },
             color: { r: 0, g: 1, b: 0, a: 0 }
@@ -33,7 +39,7 @@ export class SurfaceRenderService {
                 const model: SurfaceModel = {
                     baseUrl: url.replace(filename, ''),
                     filename,
-                    apiKey
+                    apiKey: this.apiKey
                 };
 
                 return model;
