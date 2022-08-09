@@ -53,30 +53,10 @@ export class WellboreComponent implements AfterViewInit, OnDestroy {
                 "id": "6da34026-722d-4a36-8ea7-806a02d7aa70",
                 "name": "Seabed"
             },
-            // {
-            //     "id": "03aa12e4-5d73-4b79-baa8-0fee806327bf",
-            //     "name": "TUtsira"
-            // },
-            // {
-            //     "id": "0af82424-8e22-4e08-a898-34158a7ced89",
-            //     "name": "Top_Skagerrak 1_structural_surface"
-            // },
             {
                 "id": "32bb32a4-4990-4c2b-8fc5-bd260025406f",
                 "name": "Top Alluvial fan depth surface"
             },
-            // {
-            //     "id": "38f9f06b-dbd7-4c9a-abf6-dc074cfffc15",
-            //     "name": "TSkade"
-            // },
-            // {
-            //     "id": "3efe63b0-c906-4d34-9a10-b31e17a5d264",
-            //     "name": "Tvaale"
-            // },
-            // {
-            //     "id": "52b1adf6-34a4-4047-9252-6a9b253b65fe",
-            //     "name": "Tgrid"
-            // },
             {
                 "id": "6b4271d9-4a00-43ca-8913-28d753508753",
                 "name": "Top Vestland (top reservoir)_structural_surface"
@@ -85,18 +65,6 @@ export class WellboreComponent implements AfterViewInit, OnDestroy {
                 "id": "7a74aff0-4576-49d8-b1b9-8e41df3e62c6",
                 "name": "Top Statfjord Gp"
             },
-            // {
-            //     "id": "a36aa11f-ef0f-4ae8-a5c9-a3dcf6518c99",
-            //     "name": "Ekofisk_top (Z)"
-            // },
-            // {
-            //     "id": "d78fc0b3-f48e-4739-8625-39f5db476bf6",
-            //     "name": "base_S1 (Depth 1)"
-            // },
-            // {
-            //     "id": "ea7eb465-a48c-4fc8-8df4-5116ffcfea47",
-            //     "name": "base_S1 (Depth 1)"
-            // }
         ];
         this.geologiq?.drawSurfaces(surfaces);
 
@@ -116,7 +84,15 @@ export class WellboreComponent implements AfterViewInit, OnDestroy {
     }
 
     zoom(id: string) {
-        if (id) {
+        if (!id) {
+            return;
+        }
+
+        try {
+            const el = JSON.parse(id);
+            this.geologiq?.zoomToElement(el);
+        }
+        catch (e) {
             this.geologiq?.zoomToElement(id);
         }
     }
