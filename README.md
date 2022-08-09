@@ -21,6 +21,14 @@ If you want to use geologiq-plugin in your project, you should import the plugin
 npm i @informatiq/geologiq-plugin
 ```
 
+If you want to compile and publish geologiq-plugin by yourself, for instance, when using your private npm feed, build and publish the geologiq-plugin package using the following steps:
+
+```js
+npm run build geologiq-plugin
+```
+
+Next publish package to your private npm feed from folder dist/geologiq-plugin.
+
 ### geologiq-plugin-example
 This project contains an example Angular application illustrating the features supported by InformatiQ GeologiQ 3D Engine and geologiq-plugin.
 
@@ -100,7 +108,7 @@ The following configuration is required by geologiq-plugin:
     dataUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.data.gz',
     frameworkUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.framework.js.gz',
     codeUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.wasm.gz',
-    productVersion: '4.0.0-a.18'     
+    productVersion: '4.0.0-a.21'
 }
 ```
 

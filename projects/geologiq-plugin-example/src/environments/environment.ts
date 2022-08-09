@@ -6,16 +6,16 @@ export const environment = {
   production: false,
   config: {
     geologiq: {
-      loaderUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.loader.js',
-      dataUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.data.gz',
-      frameworkUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.framework.js.gz',
-      codeUrl: 'https://informatiqdev.blob.core.windows.net/unity/geologiq/[version]/geologiq.wasm.gz',
+      loaderUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.loader.js',
+      dataUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.data.gz',
+      frameworkUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.framework.js.gz',
+      codeUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.wasm.gz',
       productVersion: '4.0.0-a.21'
     },
     services: {
       fdp: {
         apiKey: 'las9812mnf329asjdsf812lkj',
-        baseUrl: 'https://api-dev.informatiq.no'
+        baseUrl: 'https://api.informatiq.no'
       }
     }
   }

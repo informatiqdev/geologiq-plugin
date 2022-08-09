@@ -1,7 +1,7 @@
 import { Point } from '../../3d';
 
 export class Infrastructure {
-    id = '';
+    id: string = '';
     url?: string;
     name?: string;
     position?: Point;

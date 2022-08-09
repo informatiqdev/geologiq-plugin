@@ -31,15 +31,15 @@ export class InfrastructureService {
 
                 let filename = infra.filename ?? '';
                 filename = filename.startsWith('/') ? filename.replace(/^\//, '') : filename;
-                const fileurl = `${baseUrl}/${filename}`;
+                const fileUrl = `${baseUrl}/${filename}`;
 
-                const structure = {
+                const structure: Infrastructure = {
                     id: infra.id,
                     name: infra.name,
                     position: infra.position,
                     rotation: infra.rotation,
                     size: infra.size,
-                    fileurl
+                    url: fileUrl
                 };
 
                 return structure;
