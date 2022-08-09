@@ -1,20 +1,27 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { environment } from "../../environment";
-import { Risk } from "../render/models/risk";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { GeologiqService } from '../3d/geologiq.service';
+import { Risk } from '../render/models/risk';
 
 @Injectable({
     providedIn: 'root'
 })
 export class RiskService {
-    private baseUrl = environment.services.fdp;
+    private baseUrl: string;
+    private apiKey: string;
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private geologiqService: GeologiqService
+    ) {
+        this.baseUrl = this.geologiqService.config?.fdp?.baseUrl ?? '';
+        this.apiKey = this.geologiqService.config?.fdp?.apiKey ?? '';
+    }
 
-    getRisksByWellboreId(id: string, apiKey: string): Observable<Risk[]> {
-        let url = `${this.baseUrl}/services/fdp/risks/${id}.json?apiKey=${apiKey}`;
+    getRisksByWellboreId(id: string): Observable<Risk[]> {
+        const url = `${this.baseUrl}/services/fdp/risks/${id}.json?apiKey=${this.apiKey}`;
         return this.http.get<any[]>(url).pipe(
             map(items => {
                 const risks: Risk[] = items.map(item => {

@@ -1,7 +1,7 @@
-import { Point } from "../../3d";
+import { Point } from '../../3d';
 
 export class Infrastructure {
-    id: string = '';
+    id = '';
     url?: string;
     name?: string;
     position?: Point;

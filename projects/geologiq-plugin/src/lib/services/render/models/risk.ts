@@ -1,7 +1,7 @@
-import { ModelRef } from "./model-ref";
+import { ModelRef } from './model-ref';
 
 export class Risk {
-    id: string = '';
+    id = '';
     title?: string;
     depth?: number;
     parent?: ModelRef;
