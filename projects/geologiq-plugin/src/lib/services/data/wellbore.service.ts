@@ -22,8 +22,8 @@ export class WellboreService {
 
     getWellbore(id: string): Observable<Wellbore> {
         let url = `${this.baseUrl}/services/fdp/wellbores/${id}.json?apiKey=${this.apiKey}`;
-        return this.http.get<any[]>(url).pipe(
-            map(([traj]) => {
+        return this.http.get<any>(url).pipe(
+            map(traj => {
                 const head = traj.well?.wellHeadPosition?.utm?.geometry?.coordinates ?? [0, 0, 0];
                 const wellbore: Wellbore = {
                     id,

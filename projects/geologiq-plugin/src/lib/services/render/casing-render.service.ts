@@ -15,8 +15,8 @@ export class CasingRenderService {
 
     getCasingModels(casings: Casing[], options: Casing3dOptions | null = null): Model3D[] {
         const defaultConfig = {
-            size: { x: 100, y: 100, z: 100 },
-            color: { r: 0, g: 1, b: 0, a: 0 }
+            size: { x: 40, y: 40, z: 40 },
+            color: { r: 1, g: 1, b: 1, a: 0 }
         };
 
         return (casings || [])

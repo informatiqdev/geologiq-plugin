@@ -15,8 +15,8 @@ export class WellboreRenderService {
 
     getTubes(wellbores: Wellbore[], options: Wellbore3dOptions | null = null): Tube[] {
         const defaultConfig = {
-            radius: 10,
-            color: { r: 170 / 255, g: 170 / 255, b: 170 / 255, a: 0 }
+            radius: 3,
+            color: { r: 0.48, g: 0.88, b: 0.42, a: 0 }
         };
 
         const tubes: Tube[] = wellbores

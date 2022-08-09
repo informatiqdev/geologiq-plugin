@@ -15,7 +15,7 @@ export class RiskRenderService {
 
     getRiskModels(risks: Risk[], options: Risk3dOptions | null = null): Model3D[] {
         const defaultConfig = {
-            size: { x: 100, y: 100, z: 100 },
+            size: { x: 20, y: 20, z: 20 },
             color: { r: 1, g: 0, b: 0, a: 0 }
         };
 
