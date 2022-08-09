@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter,
     HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
-import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 
@@ -81,11 +81,17 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             switchMap(data => {
                 const ids = data.wellbores.map(DsisWellbore.getId);
                 const wellbores$ = ids.map(id => this.wellboreService.getWellbore(id));
+
                 const casings$ = data.casings
-                    ? ids.map(id => this.casingService.getCasingsByWellboreId(id))
+                    ? ids.map(id => this.casingService.getCasingsByWellboreId(id).pipe(
+                        catchError(() => of([] as Casing[]))
+                    ))
                     : [of([] as Casing[])];
+
                 const risks$ = data.risks
-                    ? ids.map(id => this.riskService.getRisksByWellboreId(id))
+                    ? ids.map(id => this.riskService.getRisksByWellboreId(id).pipe(
+                        catchError(() => of([] as Risk[]))
+                    ))
                     : [of([] as Risk[])];
 
                 return forkJoin([
