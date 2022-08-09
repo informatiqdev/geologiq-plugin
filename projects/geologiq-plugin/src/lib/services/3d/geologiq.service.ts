@@ -8,7 +8,7 @@ import { GeologiqConfig } from '../../config/geologiq-config';
 /**
  * Unity Javascript interface
  */
-export declare function createUnityInstance(elementId: Element, config: Object, progress: (n: number) => void): Promise<UnityInstance>;
+export declare function createUnityInstance(elementId: Element, config: object, progress: (n: number) => void): Promise<UnityInstance>;
 
 export declare class UnityInstance {
   constructor();
@@ -75,10 +75,10 @@ export class GeologiqService implements OnDestroy {
   /**
    * Initializes HTML canvas element with GeologiQ 3D engine
    * @param elementId Canvas element ID
-   * @param opts Geolg
-   * @param onProgress
+   * @param opts Configuration options
+   * @param onProgress Progress callback function
    */
-  private async load(elementId: string, opts: GeologiqConfig, onProgress?: (number: number) => void) {
+  private async load(elementId: string, opts: GeologiqConfig, onProgress?: (progress: number) => void): Promise<void> {
     this.loadScript(opts.loaderUrl).pipe(
       switchMap(async () => {
         const config = {
@@ -90,13 +90,13 @@ export class GeologiqService implements OnDestroy {
 
         this.canvas = this.document.createElement('canvas');
         this.canvas.id = elementId;
-        this.canvas.classList.add("geologiq-3d", "hidden");
+        this.canvas.classList.add('geologiq-3d', 'hidden');
 
-        // Default Unity3D canvas size      
+        // Default Unity3D canvas size
         this.canvas.style.width = '100%';
         this.canvas.style.height = '100%';
 
-        // NOTE: attach the canvas to the document body and hide because in the latest unity version, 
+        // NOTE: attach the canvas to the document body and hide because in the latest unity version,
         // 1) it adds event listener and 2) gets view port size to fit the player.
         // fails if it is not attached to the document
         this.canvas.style.display = 'none';
@@ -104,8 +104,9 @@ export class GeologiqService implements OnDestroy {
 
         // Create new Unity 3D engine instance
         this.unityInstance = await createUnityInstance(this.canvas, config, (progress: number): void => {
-          if (onProgress)
+          if (onProgress) {
             onProgress(progress);
+          }
         });
 
         // Indicate that Unity3D Engine is loaded
@@ -133,7 +134,7 @@ export class GeologiqService implements OnDestroy {
    * @param onLoaded Callback when GeologiQ 3D engine has been loaded
    * @param onProgress Callback indicating progress of GeologiQ 3D engine loading process
    */
-  init(elementId: string, opts: GeologiqConfig, onLoaded?: () => void, onProgress?: (number: number) => void) {
+  init(elementId: string, opts: GeologiqConfig, onLoaded?: () => void, onProgress?: (progress: number) => void): void {
     this.config = opts;
 
     const config: GeologiqConfig = {
@@ -143,8 +144,9 @@ export class GeologiqService implements OnDestroy {
       frameworkUrl: opts.frameworkUrl.replace('[version]', opts.productVersion),
       codeUrl: opts.codeUrl.replace('[version]', opts.productVersion),
       onRuntimeInitialized: () => {
-        if (onLoaded)
+        if (onLoaded) {
           onLoaded();
+        }
       }
     };
 
@@ -158,8 +160,9 @@ export class GeologiqService implements OnDestroy {
           this.load(elementId, config, onProgress);
         });
       } else {
-        if (this.unityInstance)
+        if (this.unityInstance) {
           this.unityActivated.next(true);
+        }
       }
     });
   }
@@ -176,8 +179,9 @@ export class GeologiqService implements OnDestroy {
    * @param fullscreen Enable (true) or disable (false) fullscreen mode
    */
   toggleFullscreen(fullscreen: boolean): void {
-    if (!this.isLoaded())
+    if (!this.isLoaded()) {
       return;
+    }
 
     this.zone.runOutsideAngular(() => {
       this.unityInstance?.SetFullscreen(fullscreen === true ? 1 : 0);
@@ -192,8 +196,9 @@ export class GeologiqService implements OnDestroy {
    */
   send(objectName: string, methodName: string, parameter?: any): void {
     this.zone.runOutsideAngular(() => {
-      if (!this.unityInstance || !this.isLoaded())
-        throw new Error("send() cannot be called before GeologiQ 3D engine has been loaded.");
+      if (!this.unityInstance || !this.isLoaded()) {
+        throw new Error('send() cannot be called before GeologiQ 3D engine has been loaded.');
+      }
 
       if (!parameter) {
         this.unityInstance.SendMessage(objectName, methodName);

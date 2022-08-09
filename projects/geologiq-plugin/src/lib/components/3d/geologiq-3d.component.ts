@@ -21,13 +21,15 @@ export class Geologiq3dComponent {
       this.maintainAspectRatio = this.geologiqService.config?.maintainAspectRatio === true;
   }
 
-  show() {
-    if (!this.geologiqContainer)
+  show(): void {
+    if (!this.geologiqContainer) {
       throw new Error('show must be called in AfterViewInit.');
+    }
 
     const canvas = this.geologiqService.canvasElement;
-    if (!canvas)
+    if (!canvas) {
       throw new Error('GeologiQ canvas element not created.');
+    }
 
     const element = this.geologiqContainer.nativeElement;
     element.classList.remove('keep-aspect-ratio', 'follow-parent');
@@ -43,13 +45,15 @@ export class Geologiq3dComponent {
     canvas.classList.remove('hidden');
   }
 
-  hide() {
-    if (!this.geologiqContainer)
+  hide(): void {
+    if (!this.geologiqContainer) {
       throw new Error('show must be called in AfterViewInit.');
+    }
 
     const canvas = this.geologiqService.canvasElement;
-    if (!canvas)
+    if (!canvas) {
       throw new Error('GeologiQ canvas element not created.');
+    }
 
     const element = this.geologiqContainer.nativeElement;
 
@@ -58,40 +62,40 @@ export class Geologiq3dComponent {
     element.classList.remove('keep-aspect-ratio', 'follow-parent');
   }
 
-  createView(view: Point) {
+  createView(view: Point): void {
     this.geologiqService.send('ContentManager', 'CreateView', view);
   }
 
-  toggleOcean(show: boolean) {
+  toggleOcean(show: boolean): void {
     this.geologiqService.send('ContentManager', show ? 'ShowOcean' : 'HideOcean');
   }
-  
-  defineOcean(ocean: Ocean) {
+
+  defineOcean(ocean: Ocean): void {
     this.geologiqService.send('ContentManager', 'DefineOcean', ocean);
   }
 
-  toggleSeabed(show: boolean) {
+  toggleSeabed(show: boolean): void {
     this.geologiqService.send('ContentManager', show ? 'ShowSeabed' : 'HideSeabed');
   }
 
-  drawTube(tube: Tube) {
+  drawTube(tube: Tube): void {
     this.geologiqService.send('ContentManager', 'DrawTube', tube);
   }
 
-  load3DModel(model: Model3D) {
+  load3DModel(model: Model3D): void {
     this.geologiqService.send('ContentManager', 'Load3DModel', model);
   }
 
-  loadSurface(surface: SurfaceModel) {
+  loadSurface(surface: SurfaceModel): void {
     this.geologiqService.send('ContentManager', 'LoadSurface', surface);
   }
 
-  lookAtContent(id: string | string[]) {
+  lookAtContent(id: string | string[]): void {
     const ids: string[] = id instanceof Array ? id : [id];
     this.geologiqService.send('CameraManager', 'LookAtContent', { content: ids });
   }
 
-  clear() {
+  clear(): void {
     this.geologiqService.send('ContentManager', 'ClearView');
   }
 }

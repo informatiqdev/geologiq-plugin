@@ -1,9 +1,9 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { GeologiqService } from "../3d/geologiq.service";
-import { Infrastructure } from "../render/models/infrastructure";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { GeologiqService } from '../3d/geologiq.service';
+import { Infrastructure } from '../render/models/infrastructure';
 
 @Injectable({
     providedIn: 'root'
@@ -31,7 +31,7 @@ export class InfrastructureService {
 
                 let filename = infra.filename ?? '';
                 filename = filename.startsWith('/') ? filename.replace(/^\//, '') : filename;
-                const url = `${baseUrl}/${filename}`
+                const fileurl = `${baseUrl}/${filename}`;
 
                 const structure = {
                     id: infra.id,
@@ -39,7 +39,7 @@ export class InfrastructureService {
                     position: infra.position,
                     rotation: infra.rotation,
                     size: infra.size,
-                    url
+                    fileurl
                 };
 
                 return structure;

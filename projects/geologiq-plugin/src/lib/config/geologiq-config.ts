@@ -14,7 +14,7 @@ export interface GeologiqConfig {
     };
     maintainAspectRatio?: boolean;
 
-    onProgress?: (number: number) => void;
+    onProgress?: (progress: number) => void;
     onRuntimeInitialized?: () => void;
     onLoaded?: () => void;
 }

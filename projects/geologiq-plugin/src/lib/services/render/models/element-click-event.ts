@@ -1,4 +1,4 @@
-import { DsisWellbore, GeologiqSurface } from "./geologiq-data";
+import { DsisWellbore, GeologiqSurface } from './geologiq-data';
 
 export interface ElementClickvent {
     type: string;

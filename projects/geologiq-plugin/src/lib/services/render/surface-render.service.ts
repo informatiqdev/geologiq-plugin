@@ -15,7 +15,7 @@ export class SurfaceRenderService {
         this.apiKey = this.geologiqService?.config?.fdp?.apiKey ?? '';
     }
 
-    clear() {
+    clear(): void {
         this.loaded = new Map<string, Surface>();
     }
 

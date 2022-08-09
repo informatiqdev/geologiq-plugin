@@ -1,9 +1,9 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { shareReplay } from "rxjs/operators";
-import { VisualConfig } from "../../config/visual-config";
-import { GeologiqService } from "../3d/geologiq.service";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
+import { VisualConfig } from '../../config/visual-config';
+import { GeologiqService } from '../3d/geologiq.service';
 
 @Injectable({
     providedIn: 'root'

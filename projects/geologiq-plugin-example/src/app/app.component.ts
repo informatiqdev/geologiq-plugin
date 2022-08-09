@@ -18,6 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('Application starting...');
 
+    // Load and initialize GeologiQ 3D engine
     this.loadGeologiq();
   }
 

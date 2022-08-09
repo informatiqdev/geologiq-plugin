@@ -13,8 +13,8 @@ export interface Ocean {
 }
 
 export class GeologiqSurface {
-    id: string = '';
-    name?: string = '';
+    id = '';
+    name = '';
 
     static isGeologiqSurface(data: any): data is GeologiqSurface {
         return data && data.id && data.name;
@@ -22,9 +22,9 @@ export class GeologiqSurface {
 }
 
 export class DsisWellbore {
-    wellId: string = '';
-    wellboreId: string = '';
-    defSurveyHeaderId: string = '';
+    wellId = '';
+    wellboreId = '';
+    defSurveyHeaderId = '';
 
     static getId(wellbore: DsisWellbore): string {
         return `${wellbore.wellboreId}-${wellbore.defSurveyHeaderId}`;

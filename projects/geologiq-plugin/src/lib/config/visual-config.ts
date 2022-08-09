@@ -1,4 +1,4 @@
-import { Color, Point } from "../services/3d";
+import { Color, Point } from '../services/3d';
 
 export interface VisualConfig {
     wellbore?: {

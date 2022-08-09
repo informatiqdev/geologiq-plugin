@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { GeologiqService } from "../3d/geologiq.service";
-import { Surface } from "../render/models/surface";
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { GeologiqService } from '../3d/geologiq.service';
+import { Surface } from '../render/models/surface';
 
 @Injectable({
     providedIn: 'root'

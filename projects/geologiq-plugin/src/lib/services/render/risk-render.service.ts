@@ -12,7 +12,7 @@ export class RiskRenderService {
 
     constructor(private configService: ConfigService) { }
 
-    clear() {
+    clear(): void {
         this.loaded = new Map<string, Risk>();
     }
 

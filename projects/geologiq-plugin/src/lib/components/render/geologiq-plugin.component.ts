@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter,
+    HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
 import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
@@ -18,7 +19,8 @@ import { SurfaceRenderService } from '../../services/render/surface-render.servi
 import { SurfaceService } from '../../services/data/surface.service';
 import { InfrastructureService } from '../../services/data/infrastructure.service';
 import { InfrastructureRenderService } from '../../services/render/infrastrucure-render.service';
-import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData, Ocean } from '../../services/render/models/geologiq-data';
+import { CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData,
+    DsisWellbore, InfrastructureData, Ocean } from '../../services/render/models/geologiq-data';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -31,101 +33,22 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     private destroy$ = new Subject<void>();
     private render$ = new Subject<void>();
 
-    @Output() elementClick = new EventEmitter<ElementClickEvent>();
-
-    private _position?: Point;
-    private set centerPosition(value: Point | undefined) {
-        this._position = value;
-        this.render$.next();
-    }
-
-
-    private _wellbores?: WellboreData;
-    private setWellbores(value: Wellbore[] | WellboreData) {
-        if (value instanceof Array) {
-            this._wellbores = {
-                wellbores: value ?? [],
-                config: this._wellbores?.config
-            };
-        }
-        else {
-            this._wellbores = {
-                wellbores: value?.wellbores ?? [],
-                config: value?.config ?? this._wellbores?.config
-            };
-        }
-    }
-
-    private _casings?: CasingData;
-    private setCasings(value: Casing[] | CasingData) {
-        if (value instanceof Array) {
-            this._casings = {
-                casings: value ?? [],
-                config: this._casings?.config
-            };
-        }
-        else {
-            this._casings = {
-                casings: value?.casings ?? [],
-                config: value?.config ?? this._casings?.config
-            };
-        }
-    }
-
-    private _risks?: RiskData;
-    private setRisks(value: Risk[] | RiskData) {
-        if (value instanceof Array) {
-            this._risks = {
-                risks: value ?? [],
-                config: this._risks?.config
-            };
-        }
-        else {
-            this._risks = {
-                risks: value?.risks ?? [],
-                config: value?.config ?? this._risks?.config
-            };
-        }
-    }
-
-    private _surfaces?: SurfaceData;
-    private setSurfaces(value: Surface[] | SurfaceData) {
-        if (value instanceof Array) {
-            this._surfaces = {
-                surfaces: value ?? [],
-                config: this._surfaces?.config
-            };
-        }
-        else {
-            this._surfaces = {
-                surfaces: value?.surfaces ?? [],
-                config: value?.config ?? this._surfaces?.config
-            };
-        }
-    }
-
-    private _structures?: InfrastructureData;
-    private setInfrastructures(value: Infrastructure[] | InfrastructureData) {
-        if (value instanceof Array) {
-            this._structures = {
-                infrastructures: value ?? [],
-                config: this._structures?.config
-            };
-        }
-        else {
-            this._structures = {
-                infrastructures: value?.infrastructures ?? [],
-                config: value?.config ?? this._structures?.config
-            };
-        }
-    }
-
-    @ViewChild(Geologiq3dComponent)
-    private geologiq3d?: Geologiq3dComponent;
+    private position?: Point;
+    private wellbores?: WellboreData;
+    private casings?: CasingData;
+    private risks?: RiskData;
+    private surfaces?: SurfaceData;
+    private structures?: InfrastructureData;
 
     private loadWellboreData$ = new BehaviorSubject<{ wellbores: DsisWellbore[], casings?: boolean; risks?: boolean }>({ wellbores: [] });
     private loadSurfaces$ = new BehaviorSubject<GeologiqSurface[]>([]);
     private loadInfrastructures$ = new BehaviorSubject<string[]>([]);
+
+    @ViewChild(Geologiq3dComponent)
+    private geologiq3d?: Geologiq3dComponent;
+
+    @Output()
+    elementClick = new EventEmitter<ElementClickEvent>();
 
     constructor(
         private geologiq: GeologiqService,
@@ -141,14 +64,14 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         private infrastructureRender: InfrastructureRenderService,
     ) { }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.render$.pipe(
-            filter(() => null != this.geologiq3d && null != this._position),
+            filter(() => null != this.geologiq3d && null != this.position),
             take(1),
             tap(() => {
                 this.geologiq3d?.show();
-                if (null != this._position) {
-                    this.geologiq3d?.createView(this._position);
+                if (null != this.position) {
+                    this.geologiq3d?.createView(this.position);
                 }
             }),
             takeUntil(this.destroy$)
@@ -237,13 +160,13 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
-    ngOnChanges() {
+    ngOnChanges(): void {
         if (this.geologiq3d) {
             this.refreshView();
         }
     }
 
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         this.geologiq.activated$.pipe(
             take(1),
             tap(() => {
@@ -254,19 +177,19 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
-    drawInfrastructures(infrastructures: string[]) {
+    drawInfrastructures(infrastructures: string[]): void {
         this.loadInfrastructures$.next(infrastructures);
     }
 
-    drawSurfaces(surfaces: GeologiqSurface[]) {
+    drawSurfaces(surfaces: GeologiqSurface[]): void {
         this.loadSurfaces$.next(surfaces);
     }
 
-    drawDsisWellbores(wellbores: DsisWellbore[], drawCasings = true, drawRisks = true) {
+    drawDsisWellbores(wellbores: DsisWellbore[], drawCasings = true, drawRisks = true): void {
         this.loadWellboreData$.next({ wellbores, casings: drawCasings, risks: drawRisks });
     }
 
-    drawOcean(ocean: Ocean) {
+    drawOcean(ocean: Ocean): void {
         this.geologiq.activated$.pipe(
             take(1),
             tap(() => {
@@ -277,7 +200,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
-    zoomToElement(element: DsisWellbore | GeologiqSurface | string) {
+    zoomToElement(element: DsisWellbore | GeologiqSurface | string): void {
         let id: string;
         if (DsisWellbore.isDsisWellbore(element)) {
             id = DsisWellbore.getId(element);
@@ -290,59 +213,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.geologiq3d?.lookAtContent(id);
     }
 
-    private renderInfrastructures() {
-        const structures = this._structures?.infrastructures || [];
-        const models: Model3D[] = this.infrastructureRender.getInfrastructureModels(structures || [], this._structures?.config);
-        models.forEach(model => {
-            this.geologiq3d?.load3DModel(model);
-        });
-    }
-
-    private async renderWellbores() {
-        const wellbores = this._wellbores?.wellbores || [];
-        const tubes: Tube[] = await this.wellboreRender.getTubes(wellbores, this._wellbores?.config);
-        tubes.forEach(tube => {
-            this.geologiq3d?.drawTube(tube);
-        });
-    }
-
-    private async renderCasings() {
-        const casings = this._casings?.casings || [];
-        const models: Model3D[] = await this.casingRender.getCasingModels(casings || [], this._casings?.config);
-        models.forEach(model => {
-            this.geologiq3d?.load3DModel(model);
-        });
-    }
-
-    private async renderRisks() {
-        const risks = this._risks?.risks || [];
-        const models: Model3D[] = await this.riskRender.getRiskModels(risks || [], this._risks?.config);
-        models.forEach(model => {
-            this.geologiq3d?.load3DModel(model);
-        });
-    }
-
-    private renderSurfaces() {
-        const surfaces = this._surfaces?.surfaces || [];
-        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this._surfaces?.config);
-        models.forEach(model => {
-            this.geologiq3d?.loadSurface(model);
-        });
-    }
-
-    private refreshView() {
-        if (!this.geologiq3d) {
-            throw new Error('GeologiQ component not properly initialized.');
-        }
-
-        this.renderWellbores();
-        this.renderCasings();
-        this.renderRisks();
-        this.renderSurfaces();
-        this.renderInfrastructures();
-    }
-
-    reset() {
+    reset(): void {
         if (!this.geologiq3d) {
             throw new Error('GeologiQ component not properly initialized.');
         }
@@ -365,7 +236,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         if ('contentClicked' === e.data.type) {
             const id: string = e.data.object.id;
 
-            const surface = this.loadSurfaces$.getValue()?.find(s => s.id == id);
+            const surface = this.loadSurfaces$.getValue()?.find(s => s.id === id);
             if (null != surface) {
                 this.elementClick.emit({ type: 'surface', data: surface });
                 return;
@@ -377,31 +248,163 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                 return;
             }
 
-            const casing = this._casings?.casings?.find(w => w.id === id);
+            const casing = this.casings?.casings?.find(w => w.id === id);
             if (null != casing) {
                 this.elementClick.emit({ type: 'casing', data: casing.id });
                 return;
             }
 
-            const risk = this._risks?.risks?.find(w => w.id === id);
+            const risk = this.risks?.risks?.find(w => w.id === id);
             if (null != risk) {
                 this.elementClick.emit({ type: 'risk', data: risk.id });
                 return;
             }
 
-            const infrastructure = this._structures?.infrastructures?.find(w => w.id === id);
+            const infrastructure = this.structures?.infrastructures?.find(w => w.id === id);
             if (null != infrastructure) {
                 this.elementClick.emit({ type: 'infrastructure', data: infrastructure.id });
                 return;
             }
 
             console.warn(`No element found with id: ${id}`);
-            //  this.elementClicked.emit(id);
         }
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.destroy$.next();
         this.geologiq3d?.hide();
+    }
+
+    private set centerPosition(value: Point | undefined) {
+        this.position = value;
+        this.render$.next();
+    }
+
+    private setWellbores(value: Wellbore[] | WellboreData): void {
+        if (value instanceof Array) {
+            this.wellbores = {
+                wellbores: value ?? [],
+                config: this.wellbores?.config
+            };
+        }
+        else {
+            this.wellbores = {
+                wellbores: value?.wellbores ?? [],
+                config: value?.config ?? this.wellbores?.config
+            };
+        }
+    }
+
+    private setCasings(value: Casing[] | CasingData): void {
+        if (value instanceof Array) {
+            this.casings = {
+                casings: value ?? [],
+                config: this.casings?.config
+            };
+        }
+        else {
+            this.casings = {
+                casings: value?.casings ?? [],
+                config: value?.config ?? this.casings?.config
+            };
+        }
+    }
+
+    private setRisks(value: Risk[] | RiskData): void {
+        if (value instanceof Array) {
+            this.risks = {
+                risks: value ?? [],
+                config: this.risks?.config
+            };
+        }
+        else {
+            this.risks = {
+                risks: value?.risks ?? [],
+                config: value?.config ?? this.risks?.config
+            };
+        }
+    }
+
+    private setSurfaces(value: Surface[] | SurfaceData): void {
+        if (value instanceof Array) {
+            this.surfaces = {
+                surfaces: value ?? [],
+                config: this.surfaces?.config
+            };
+        }
+        else {
+            this.surfaces = {
+                surfaces: value?.surfaces ?? [],
+                config: value?.config ?? this.surfaces?.config
+            };
+        }
+    }
+
+
+    private setInfrastructures(value: Infrastructure[] | InfrastructureData): void {
+        if (value instanceof Array) {
+            this.structures = {
+                infrastructures: value ?? [],
+                config: this.structures?.config
+            };
+        }
+        else {
+            this.structures = {
+                infrastructures: value?.infrastructures ?? [],
+                config: value?.config ?? this.structures?.config
+            };
+        }
+    }
+
+    private renderInfrastructures(): void {
+        const structures = this.structures?.infrastructures || [];
+        const models: Model3D[] = this.infrastructureRender.getInfrastructureModels(structures || [], this.structures?.config);
+        models.forEach(model => {
+            this.geologiq3d?.load3DModel(model);
+        });
+    }
+
+    private async renderWellbores(): Promise<void> {
+        const wellbores = this.wellbores?.wellbores || [];
+        const tubes: Tube[] = await this.wellboreRender.getTubes(wellbores, this.wellbores?.config);
+        tubes.forEach(tube => {
+            this.geologiq3d?.drawTube(tube);
+        });
+    }
+
+    private async renderCasings(): Promise<void> {
+        const casings = this.casings?.casings || [];
+        const models: Model3D[] = await this.casingRender.getCasingModels(casings || [], this.casings?.config);
+        models.forEach(model => {
+            this.geologiq3d?.load3DModel(model);
+        });
+    }
+
+    private async renderRisks(): Promise<void> {
+        const risks = this.risks?.risks || [];
+        const models: Model3D[] = await this.riskRender.getRiskModels(risks || [], this.risks?.config);
+        models.forEach(model => {
+            this.geologiq3d?.load3DModel(model);
+        });
+    }
+
+    private renderSurfaces(): void {
+        const surfaces = this.surfaces?.surfaces || [];
+        const models: SurfaceModel[] = this.surfaceRender.getSurfaceModels(surfaces || [], this.surfaces?.config);
+        models.forEach(model => {
+            this.geologiq3d?.loadSurface(model);
+        });
+    }
+
+    private refreshView(): void {
+        if (!this.geologiq3d) {
+            throw new Error('GeologiQ component not properly initialized.');
+        }
+
+        this.renderWellbores();
+        this.renderCasings();
+        this.renderRisks();
+        this.renderSurfaces();
+        this.renderInfrastructures();
     }
 }

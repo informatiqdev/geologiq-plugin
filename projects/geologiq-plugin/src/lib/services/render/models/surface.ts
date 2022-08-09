@@ -1,4 +1,4 @@
 export class Surface {
-    id: string = '';
+    id = '';
     url?: string;
 }
