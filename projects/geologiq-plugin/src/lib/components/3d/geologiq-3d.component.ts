@@ -18,7 +18,7 @@ export class Geologiq3dComponent {
 
   constructor(
     private geologiqService: GeologiqService) {
-      this.maintainAspectRatio = this.geologiqService.config?.maintainAspectRatio === true;
+    this.maintainAspectRatio = this.geologiqService.config?.maintainAspectRatio === true;
   }
 
   show(): void {
@@ -93,6 +93,14 @@ export class Geologiq3dComponent {
   lookAtContent(id: string | string[]): void {
     const ids: string[] = id instanceof Array ? id : [id];
     this.geologiqService.send('CameraManager', 'LookAtContent', { content: ids });
+  }
+
+  lookNorth() {
+    this.geologiqService.send('CameraManager', 'LookNorth');
+  }
+
+  frameAllContent() {
+    this.geologiqService.send('CameraManager', 'FrameAllContent');
   }
 
   clear(): void {

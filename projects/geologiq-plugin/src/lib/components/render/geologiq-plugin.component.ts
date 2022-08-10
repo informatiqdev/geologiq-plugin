@@ -140,6 +140,14 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                     if (this.geologiq3d) {
                         this.render$.next();
                         this.renderSurfaces();
+
+                        // NOTE: temporariliy do home fly with a timeout after surface rendering instructions are sent to unity
+                        // ideally it should be done after all the contents are loaded but that
+                        // requires unity to callback when the surfaces and infrastructures are loaded
+                        // until Petter add the support for callback use a timeout
+                        setTimeout(() => {
+                            this.geologiq3d?.lookNorth();
+                        }, 1 * 1000);
                     }
                 }
             }),
