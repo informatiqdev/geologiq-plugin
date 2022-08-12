@@ -22,7 +22,7 @@ export class InfrastructureService {
 
     getInfrastructure(id: string): Observable<Infrastructure> {
         const baseUrl = `${this.baseUrl}/services/fdp/infrastructures`;
-        const url = `${baseUrl}/${id}.json?apiKey=${this.apiKey}`;
+        const url = `${baseUrl}/${id}.json?apiKey=${this.apiKey}&_=${Date.now()}`;
         return this.http.get<any>(url).pipe(
             map(infra => {
                 if (!infra) {

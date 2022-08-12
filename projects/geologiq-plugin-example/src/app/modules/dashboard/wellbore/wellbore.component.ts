@@ -1,22 +1,23 @@
 import { Subject } from 'rxjs';
-import { Component, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
-import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEvent, Ocean } from 'geologiq-plugin';
-
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEvent, Ocean, GeologiqService } from 'geologiq-plugin';
 
 @Component({
     selector: 'app-wellbore',
     templateUrl: './wellbore.component.html',
     styleUrls: ['./wellbore.component.scss']
 })
-export class WellboreComponent implements AfterViewInit, OnDestroy {
+export class WellboreComponent implements OnDestroy {
     private destroy$ = new Subject<void>();
 
     @ViewChild('plugin')
     geologiq?: GeologiqPluginComponent;
 
+    show3d = true;
+
     constructor() { }
 
-    ngAfterViewInit(): void {
+    private refresh(): void {
         const ocean: Ocean = {
             position: { x: 0, y: 0, z: 0 }, // x=easting, y=tvd, z=northing
             size: { x: 20000, y: 0, z: 15000 },
@@ -289,21 +290,50 @@ export class WellboreComponent implements AfterViewInit, OnDestroy {
         this.destroy$.unsubscribe();
     }
 
-    onElementClick(event: ElementClickEvent) {
+    onElementClick(event: ElementClickEvent): void {
         console.log(`clicked element`, event);
     }
 
-    zoom(id: string) {
+    private parseElement(id: string): any[] {
+        try {
+            const el = JSON.parse(id);
+            return el instanceof Array ? el : [el];
+        }
+        catch (e) {
+            return [id];
+        }
+    }
+
+    zoom(id: string): void {
         if (!id) {
             return;
         }
 
-        try {
-            const el = JSON.parse(id);
-            this.geologiq?.zoomToElement(el);
+        const el = this.parseElement(id);
+        this.geologiq?.zoomToElement(el);
+    }
+
+
+    highlight(id: string): void {
+        if (!id) {
+            return;
         }
-        catch (e) {
-            this.geologiq?.zoomToElement(id);
-        }
+
+        const el = this.parseElement(id);
+        this.geologiq?.highlightElement(el);
+    }
+
+    removeAllHighlights(): void {
+        this.geologiq?.removeAllHighlights();
+    }
+
+    toggle3d(): void {
+        this.show3d = !this.show3d;
+    }
+
+    onGeologiqLoad(): void {
+        setTimeout(() => {
+            this.refresh();
+        }, 0);
     }
 }

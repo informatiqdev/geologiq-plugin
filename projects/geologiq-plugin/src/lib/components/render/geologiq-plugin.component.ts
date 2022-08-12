@@ -35,8 +35,9 @@ import { Casing, Risk, Wellbore, Surface, Infrastructure, ElementClickEvent } fr
 export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     private destroy$ = new Subject<void>();
     private render$ = new Subject<void>();
+    private rendered = false;
 
-    private position?: Point;
+    private position?: Point | null;
     private wellbores?: WellboreData;
     private casings?: CasingData;
     private risks?: RiskData;
@@ -48,10 +49,13 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     private loadInfrastructures$ = new BehaviorSubject<string[]>([]);
 
     @ViewChild(Geologiq3dComponent)
-    private geologiq3d?: Geologiq3dComponent;
+    geologiq3d?: Geologiq3dComponent;
 
     @Output()
     elementClick = new EventEmitter<ElementClickEvent>();
+
+    @Output()
+    onLoad = new EventEmitter<void>();
 
     constructor(
         private geologiq: GeologiqService,
@@ -68,14 +72,22 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     ) { }
 
     ngOnInit(): void {
-        this.render$.pipe(
-            filter(() => null != this.geologiq3d && null != this.position),
+        this.destroy$.pipe(
             take(1),
             tap(() => {
+                this.geologiq3d?.hide();
+                this.rendered = false;
+                this.position = null;
+            })
+        ).subscribe();
+
+        this.render$.pipe(
+            filter(() => null != this.geologiq3d && null != this.position && !this.rendered),
+            tap(() => {
+                console.log('geo-3d: renders$.next()', { position: this.position })
                 this.geologiq3d?.show();
-                if (null != this.position) {
-                    this.geologiq3d?.createView(this.position);
-                }
+                this.geologiq3d?.createView(this.position ?? new Point);
+                this.rendered = true;
             }),
             takeUntil(this.destroy$)
         ).subscribe();
@@ -115,8 +127,9 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                     this.setCasings((casings as any).flat());
                     this.setRisks((risks as any).flat());
 
+                    this.render$.next();
+
                     if (this.geologiq3d) {
-                        this.render$.next();
                         this.refreshView();
                     }
                 }
@@ -137,14 +150,15 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                 next: ([surfaces]) => {
                     this.setSurfaces(surfaces);
 
+                    this.render$.next();
+
                     if (this.geologiq3d) {
-                        this.render$.next();
                         this.renderSurfaces();
 
                         // NOTE: temporariliy do home fly with a timeout after surface rendering instructions are sent to unity
                         // ideally it should be done after all the contents are loaded but that
                         // requires unity to callback when the surfaces and infrastructures are loaded
-                        // until Petter add the support for callback use a timeout
+                        // until Petter add the support for callback use this workaround
                         setTimeout(() => {
                             this.geologiq3d?.lookNorth();
                         }, 1 * 1000);
@@ -167,8 +181,9 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                 next: ([structures]) => {
                     this.setInfrastructures(structures);
 
+                    this.render$.next();
+
                     if (this.geologiq3d) {
-                        this.render$.next();
                         this.renderInfrastructures();
                     }
                 }
@@ -187,7 +202,10 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.geologiq.activated$.pipe(
             take(1),
             tap(() => {
+                this.reset();
                 this.render$.next();
+
+                this.onLoad.next();
                 this.refreshView();
             }),
             takeUntil(this.destroy$)
@@ -217,17 +235,33 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
     }
 
-    zoomToElement(element: DsisWellbore | GeologiqSurface | string): void {
-        let id: string;
-        if (DsisWellbore.isDsisWellbore(element)) {
-            id = DsisWellbore.getId(element);
-        } else if (GeologiqSurface.isGeologiqSurface(element)) {
-            id = element.id;
-        } else {
-            id = element;
-        }
+    zoomToElement(elements: (DsisWellbore | GeologiqSurface | string)[]): void {
+        const ids: string[] = this.parseElementId(elements);
+        this.geologiq3d?.lookAtContent(ids);
+    }
 
-        this.geologiq3d?.lookAtContent(id);
+    highlightElement(elements: (DsisWellbore | GeologiqSurface | string)[]): void {
+        const ids: string[] = this.parseElementId(elements);
+
+        this.geologiq3d?.highlightElement(ids);
+    }
+
+    removeAllHighlights(): void {
+        this.geologiq3d?.removeAllHighlights();
+    }
+
+    private parseElementId(elements: (DsisWellbore | GeologiqSurface | string)[]): string[] {
+        const ids: string[] = elements.map(el => {
+            if (DsisWellbore.isDsisWellbore(el)) {
+                return DsisWellbore.getId(el);
+            } else if (GeologiqSurface.isGeologiqSurface(el)) {
+                return el.id;
+            } else {
+                return el;
+            }
+        });
+
+        return ids;
     }
 
     reset(): void {
@@ -252,44 +286,47 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
         if ('contentClicked' === e.data.type) {
             const id: string = e.data.object.id;
-
-            const surface = this.loadSurfaces$.getValue()?.find(s => s.id === id);
-            if (null != surface) {
-                this.elementClick.emit({ type: 'surface', data: surface });
-                return;
-            }
-
-            const wellbore = this.loadWellboreData$.getValue()?.wellbores?.find(wb => DsisWellbore.getId(wb) === id);
-            if (null != wellbore) {
-                this.elementClick.emit({ type: 'wellbore', data: wellbore });
-                return;
-            }
-
-            const casing = this.casings?.casings?.find(w => w.id === id);
-            if (null != casing) {
-                this.elementClick.emit({ type: 'casing', data: casing.id });
-                return;
-            }
-
-            const risk = this.risks?.risks?.find(w => w.id === id);
-            if (null != risk) {
-                this.elementClick.emit({ type: 'risk', data: risk.id });
-                return;
-            }
-
-            const infrastructure = this.structures?.infrastructures?.find(w => w.id === id);
-            if (null != infrastructure) {
-                this.elementClick.emit({ type: 'infrastructure', data: infrastructure.id });
-                return;
-            }
-
-            console.warn(`No element found with id: ${id}`);
+            this.onContentClicked(id);
         }
+    }
+
+    private onContentClicked(id: string): void {
+        const surface = this.loadSurfaces$.getValue()?.find(s => s.id === id);
+        if (null != surface) {
+            this.elementClick.emit({ type: 'surface', data: surface });
+            return;
+        }
+
+        const wellbore = this.loadWellboreData$.getValue()?.wellbores?.find(wb => DsisWellbore.getId(wb) === id);
+        if (null != wellbore) {
+            this.elementClick.emit({ type: 'wellbore', data: wellbore });
+            return;
+        }
+
+        const casing = this.casings?.casings?.find(w => w.id === id);
+        if (null != casing) {
+            this.elementClick.emit({ type: 'casing', data: casing.id });
+            return;
+        }
+
+        const risk = this.risks?.risks?.find(w => w.id === id);
+        if (null != risk) {
+            this.elementClick.emit({ type: 'risk', data: risk.id });
+            return;
+        }
+
+        const infrastructure = this.structures?.infrastructures?.find(w => w.id === id);
+        if (null != infrastructure) {
+            this.elementClick.emit({ type: 'infrastructure', data: infrastructure.id });
+            return;
+        }
+
+        console.warn(`No element found with id: ${id}`);
     }
 
     ngOnDestroy(): void {
         this.destroy$.next();
-        this.geologiq3d?.hide();
+        this.destroy$.complete();
     }
 
     private set centerPosition(value: Point | undefined) {

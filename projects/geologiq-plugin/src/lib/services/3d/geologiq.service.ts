@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, first, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, first, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Injectable, Inject, NgZone, OnDestroy } from '@angular/core';
 
 import { GeologiqConfig } from '../../config/geologiq-config';
@@ -152,19 +152,22 @@ export class GeologiqService implements OnDestroy {
 
     this.zone.onStable.pipe(
       first(),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      // If Unity instance has not been loaded before, then load the Unity engine
-      if (!this.unityInstance) {
-        this.zone.runOutsideAngular(() => {
-          this.load(elementId, config, onProgress);
-        });
-      } else {
-        if (this.unityInstance) {
-          this.unityActivated.next(true);
+      tap({
+        next: () => {
+          // If Unity instance has not been loaded before, then load the Unity engine
+          if (!this.unityInstance) {
+            this.zone.runOutsideAngular(() => {
+              this.load(elementId, config, onProgress);
+            });
+          } else {
+            if (this.unityInstance) {
+              this.unityActivated.next(true);
+            }
+          }
         }
-      }
-    });
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe();
   }
 
   /**

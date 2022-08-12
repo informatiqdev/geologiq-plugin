@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 
@@ -8,21 +9,22 @@ import { WellboreComponent } from './wellbore/wellbore.component';
 
 const routes: Route[] = [
     {
-        path     : '',
+        path: '',
         component: DashboardComponent
     }
 ];
 
-@NgModule({    
+@NgModule({
     declarations: [
         DashboardComponent,
         WellboreComponent
     ],
     imports: [
         RouterModule.forChild(routes),
-        GeologiqPluginModule
+        GeologiqPluginModule,
+        CommonModule
+
     ]
 })
-export class DashboardModule
-{
+export class DashboardModule {
 }

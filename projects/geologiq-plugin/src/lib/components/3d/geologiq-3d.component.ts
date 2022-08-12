@@ -1,8 +1,9 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, Inject } from '@angular/core';
 
 import { GeologiqService } from '../../services/3d/geologiq.service';
 import { Tube, Model3D, Point, SurfaceModel } from '../../services/3d';
 import { Ocean } from '../../services/render';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'geologiq-3d',
@@ -16,8 +17,12 @@ export class Geologiq3dComponent {
 
   private maintainAspectRatio = false;
 
+  private document: Document;
+
   constructor(
-    private geologiqService: GeologiqService) {
+    private geologiqService: GeologiqService,
+    @Inject(DOCUMENT) document: any) {
+    this.document = document;
     this.maintainAspectRatio = this.geologiqService.config?.maintainAspectRatio === true;
   }
 
@@ -60,6 +65,9 @@ export class Geologiq3dComponent {
     element.remove(canvas as Node);
     canvas.classList.add('hidden');
     element.classList.remove('keep-aspect-ratio', 'follow-parent');
+
+    canvas.style.display = 'none';
+    this.document.body.appendChild(canvas as Node);
   }
 
   createView(view: Point): void {
@@ -94,6 +102,16 @@ export class Geologiq3dComponent {
     const ids: string[] = id instanceof Array ? id : [id];
     this.geologiqService.send('CameraManager', 'LookAtContent', { content: ids });
   }
+
+  highlightElement(id: string | string[]): void {
+    const ids: string[] = id instanceof Array ? id : [id];
+    this.geologiqService.send('ContentManager', 'Highlight', { content: ids });
+  }
+
+  removeAllHighlights(): void {
+    this.geologiqService.send('ContentManager', 'RemoveAllHighlights');
+  }
+
 
   lookNorth() {
     this.geologiqService.send('CameraManager', 'LookNorth');

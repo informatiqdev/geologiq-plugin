@@ -4,10 +4,14 @@
             <input type="text" class="form-control mt-4" #id placeholder="enter element id or JSON"/>
             <br />
             <button class="btn btn-secondary mt-0" (click)="zoom(id.value)">Zoom</button>
+            &nbsp;<button class="btn btn-secondary mt-0" (click)="highlight(id.value)">Highlight</button>
+            &nbsp;<button class="btn btn-secondary mt-0" (click)="toggle3d()">Toggle 3D</button>
+            <br/><br/>
+            <button class="btn btn-secondary mt-0" (click)="removeAllHighlights()">Remove All Highlights</button>
         </div>
         <div class="col">
-            <div style="width: 1200px; height: 800px">
-                <geologiq-plugin (elementClick)="onElementClick($event)" #plugin></geologiq-plugin>
+            <div style="width: 1200px; height: 800px" *ngIf="show3d">
+                <geologiq-plugin (onLoad)="onGeologiqLoad()" (elementClick)="onElementClick($event)" #plugin></geologiq-plugin>
             </div>
         </div>
         <div class="col"></div>
