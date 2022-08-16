@@ -255,6 +255,26 @@ export class WellboreComponent implements OnDestroy {
                 "wellId": "8nNsuWiBsv",
                 "wellboreId": "srV2KgHHMI",
                 "defSurveyHeaderId": "jpSRM"
+            },
+            {
+                "wellId": "1kiMZoslr6",
+                "wellboreId": "0vySe0vp99",
+                "defSurveyHeaderId": "SYuv8"
+            },
+            {
+                "wellId": "RMfyR74GLZ",
+                "wellboreId": "gCB7vCu3gj",
+                "defSurveyHeaderId": "y72h3",
+            },
+            {
+                "wellId": "iLOBuvyT9L",
+                "wellboreId": "zalYRPu5Lb",
+                "defSurveyHeaderId": "6NliV",
+            },
+            {
+                "wellId": "icQsBrMvLu",
+                "wellboreId": "hoQvXGOnWc", 
+                "defSurveyHeaderId": "6yTuW"
             }
         ];
         this.geologiq?.drawDsisWellbores(wellbores);
