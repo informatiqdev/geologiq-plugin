@@ -10,8 +10,10 @@ import { GeologiqService } from '../3d/geologiq.service';
 export class SurfaceRenderService {
     private apiKey: string;
     private loaded = new Map<string, Surface>();
+    private version: string;
 
     constructor(private geologiqService: GeologiqService) {
+        this.version = Date.now().toString();
         this.apiKey = this.geologiqService?.config?.fdp?.apiKey ?? '';
     }
 
@@ -39,7 +41,8 @@ export class SurfaceRenderService {
                 const model: SurfaceModel = {
                     baseUrl: url.replace(filename, ''),
                     filename,
-                    apiKey: this.apiKey
+                    apiKey: this.apiKey,
+                    version: this.version,
                 };
 
                 return model;

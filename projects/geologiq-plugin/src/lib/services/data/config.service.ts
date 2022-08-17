@@ -12,20 +12,23 @@ export class ConfigService {
     private baseUrl: string;
     private apiKey: string;
     private config$?: Observable<VisualConfig>;
+    private version: string;
 
     constructor(
         private http: HttpClient,
         private geologiqService: GeologiqService
     ) {
-        this.baseUrl = this.geologiqService.config?.fdp?.baseUrl ?? '';
-        this.apiKey = this.geologiqService.config?.fdp?.apiKey ?? '';
+        this.version = Date.now().toString();
+        const fdp =  this.geologiqService.config?.fdp;
+        this.baseUrl = fdp?.baseUrl ?? '';
+        this.apiKey = fdp?.apiKey ?? '';
     }
 
     getVisualConfig(): Observable<VisualConfig> {
         if (!this.config$) {
             // make sure to bypass the browser cache by appending a random version as a query string
             // because config might be updated and browser aggresively cache static files
-            const url = `${this.baseUrl}/services/fdp/configs/visual-config.json?apiKey=${this.apiKey}&_=${Math.random()}`;
+            const url = `${this.baseUrl}/services/fdp/configs/visual-config.json?apiKey=${this.apiKey}&_=${this.version}`;
             this.config$ = this.http.get<VisualConfig>(url).pipe(
                 shareReplay()
             );

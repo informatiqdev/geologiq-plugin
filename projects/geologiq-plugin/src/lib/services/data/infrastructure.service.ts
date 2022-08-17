@@ -11,18 +11,21 @@ import { Infrastructure } from '../render/models/infrastructure';
 export class InfrastructureService {
     private baseUrl: string;
     private apiKey: string;
+    private version: string;
 
     constructor(
         private http: HttpClient,
         private geologiqService: GeologiqService
     ) {
-        this.baseUrl = this.geologiqService.config?.fdp?.baseUrl ?? '';
-        this.apiKey = this.geologiqService.config?.fdp?.apiKey ?? '';
+        this.version = Date.now().toString();
+        const fdp =  this.geologiqService.config?.fdp;
+        this.baseUrl = fdp?.baseUrl ?? '';
+        this.apiKey = fdp?.apiKey ?? '';
     }
 
     getInfrastructure(id: string): Observable<Infrastructure> {
         const baseUrl = `${this.baseUrl}/services/fdp/infrastructures`;
-        const url = `${baseUrl}/${id}.json?apiKey=${this.apiKey}&_=${Date.now()}`;
+        const url = `${baseUrl}/${id}.json?apiKey=${this.apiKey}&_=${this.version}`;
         return this.http.get<any>(url).pipe(
             map(infra => {
                 if (!infra) {
