@@ -39,4 +39,17 @@ export interface VisualConfig {
             };
         };
     };
+
+    surfaceTube?: {
+        radius?: number;
+        color?: Color;
+
+        // for surface tube specific
+        configs?: {
+            [id: string]: {
+                radius?: number;
+                color?: Color;
+            };
+        };
+    };
 }

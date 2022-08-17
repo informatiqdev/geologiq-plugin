@@ -21,9 +21,11 @@ import { SurfaceService } from '../../services/data/surface.service';
 import { InfrastructureService } from '../../services/data/infrastructure.service';
 import { InfrastructureRenderService } from '../../services/render/infrastrucure-render.service';
 import {
-    CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData, Ocean
+    CasingData, RiskData, SurfaceData, GeologiqSurface, WellboreData, DsisWellbore, InfrastructureData, Ocean, SurfaceTubeData
 } from '../../services/render/models/geologiq-data';
-import { Casing, Risk, Wellbore, Surface, Infrastructure, ElementClickEvent } from '../../services/render';
+import { Casing, Risk, Wellbore, Surface, Infrastructure, ElementClickEvent, SurfaceTube } from '../../services/render';
+import { SurfaceTubeService } from '../../services/data/surface-tube.service';
+import { SurfaceTubeRenderService } from '../../services/render/surface-tube-render.service';
 
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
@@ -43,10 +45,12 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     private risks?: RiskData;
     private surfaces?: SurfaceData;
     private structures?: InfrastructureData;
+    private surfaceTubes?: SurfaceTubeData;
 
     private loadWellboreData$ = new BehaviorSubject<{ wellbores: DsisWellbore[], casings?: boolean; risks?: boolean }>({ wellbores: [] });
     private loadSurfaces$ = new BehaviorSubject<GeologiqSurface[]>([]);
     private loadInfrastructures$ = new BehaviorSubject<string[]>([]);
+    private loadSurfaceTubes$ = new BehaviorSubject<string[]>([]);
 
     @ViewChild(Geologiq3dComponent)
     geologiq3d?: Geologiq3dComponent;
@@ -69,6 +73,8 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         private surfaceService: SurfaceService,
         private infrastructureService: InfrastructureService,
         private infrastructureRender: InfrastructureRenderService,
+        private surfaceTubeService: SurfaceTubeService,
+        private surfaceTubeRender: SurfaceTubeRenderService,
     ) { }
 
     ngOnInit(): void {
@@ -190,6 +196,29 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             }),
             takeUntil(this.destroy$)
         ).subscribe();
+
+        this.loadSurfaceTubes$.pipe(
+            switchMap(tubes => {
+                const surfaceTubes$ = tubes.map(tube => this.surfaceTubeService.getSurfaceTubes(tube));
+
+                return forkJoin([
+                    forkJoin(surfaceTubes$),
+                    this.geologiq.activated$.pipe(take(1))
+                ]);
+            }),
+            tap({
+                next: ([tubes]) => {
+                    this.setSurfaceTubes(tubes);
+
+                    this.render$.next();
+
+                    if (this.geologiq3d) {
+                        this.renderSurfaceTubes();
+                    }
+                }
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
     }
 
     ngOnChanges(): void {
@@ -199,6 +228,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     ngAfterViewInit(): void {
+
         this.geologiq.activated$.pipe(
             take(1),
             tap(() => {
@@ -210,6 +240,10 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             }),
             takeUntil(this.destroy$)
         ).subscribe();
+    }
+
+    drawSurfaceTubes(surfaceTubes: string[]): void {
+        this.loadSurfaceTubes$.next(surfaceTubes);
     }
 
     drawInfrastructures(infrastructures: string[]): void {
@@ -274,6 +308,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.riskRender.clear();
         this.surfaceRender.clear();
         this.infrastructureRender.clear();
+        this.surfaceTubeRender.clear();
         this.geologiq3d.clear();
     }
 
@@ -318,6 +353,12 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         const infrastructure = this.structures?.infrastructures?.find(w => w.id === id);
         if (null != infrastructure) {
             this.elementClick.emit({ type: 'infrastructure', data: infrastructure.id });
+            return;
+        }
+
+        const surfaceTube = this.surfaceTubes?.surfaceTubes?.find(w => w.id === id);
+        if (null != surfaceTube) {
+            this.elementClick.emit({ type: 'surface-tube', data: surfaceTube.id });
             return;
         }
 
@@ -418,6 +459,31 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         });
     }
 
+
+    private setSurfaceTubes(value: SurfaceTube[] | SurfaceTubeData): void {
+        if (value instanceof Array) {
+            this.surfaceTubes = {
+                surfaceTubes: value ?? [],
+                config: this.surfaceTubes?.config
+            };
+        }
+        else {
+            this.surfaceTubes = {
+                surfaceTubes: value?.surfaceTubes ?? [],
+                config: value?.config ?? this.surfaceTubes?.config
+            };
+        }
+    }
+
+    private async renderSurfaceTubes(): Promise<void> {
+        const surfaceTubes = this.surfaceTubes?.surfaceTubes || [];
+        const tubes: Tube[] = await this.surfaceTubeRender.getTubes(surfaceTubes, this.surfaceTubes?.config);
+        tubes.forEach(tube => {
+            this.geologiq3d?.drawTube(tube);
+        });
+    }
+
+
     private async renderWellbores(): Promise<void> {
         const wellbores = this.wellbores?.wellbores || [];
         const tubes: Tube[] = await this.wellboreRender.getTubes(wellbores, this.wellbores?.config);
@@ -459,6 +525,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.renderCasings();
         this.renderRisks();
         this.renderSurfaces();
+        this.renderSurfaceTubes();
         this.renderInfrastructures();
     }
 }

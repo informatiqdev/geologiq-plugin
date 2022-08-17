@@ -299,6 +299,12 @@ export class WellboreComponent implements OnDestroy {
         ];
         this.geologiq?.drawSurfaces(surfaces);
 
+        const surfaceTubes: string[] = [
+            '0a7f872d-ee39-485a-a4e8-a6e8cf05c591', // Flowline Oil dummy
+            '3cbcffb2-5ae1-4405-bb73-3f9e4ceb5e16' // Umbilicl dummy
+        ];
+        this.geologiq?.drawSurfaceTubes(surfaceTubes);
+
         const structures = [
             '332a1795-8ca6-440c-8975-543c671cd21c' // ivar aasen platform
         ];

@@ -43,3 +43,10 @@ export interface Infrastructure3dOptions {
 }
 
 export interface Infrastructure3dConfig {}
+
+export interface SurfaceTube3dConfig {}
+
+export interface SurfaceTube3dOptions {
+    default?: SurfaceTube3dConfig;
+    surfaceTubes?: Map<string, SurfaceTube3dConfig>;
+}

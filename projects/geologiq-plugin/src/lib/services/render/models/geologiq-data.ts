@@ -3,8 +3,9 @@ import { Casing } from './casing';
 import { Wellbore } from './wellbore';
 import { Surface } from './surface';
 import { Infrastructure } from './infrastructure';
-import { Casing3dOptions, Infrastructure3dConfig, Risk3dOptions, Surface3dConfig, Wellbore3dOptions } from './geologiq-3d-options';
+import { Casing3dOptions, Infrastructure3dConfig, Risk3dOptions, Surface3dConfig, SurfaceTube3dConfig, Wellbore3dOptions } from './geologiq-3d-options';
 import { Point } from '../../3d';
+import { SurfaceTube } from './surface-tube';
 
 export interface Ocean {
     size: Point;
@@ -58,4 +59,9 @@ export interface SurfaceData {
 export interface InfrastructureData {
     infrastructures: Infrastructure[];
     config?: Infrastructure3dConfig;
+}
+
+export interface SurfaceTubeData {
+    surfaceTubes: SurfaceTube[];
+    config?: SurfaceTube3dConfig;
 }
