@@ -112,9 +112,20 @@ export class Geologiq3dComponent {
     this.geologiqService.send('ContentManager', 'RemoveAllHighlights');
   }
 
+  lookEast() {
+    this.geologiqService.send('CameraManager', 'LookEast');
+  }
+
+  lookWest() {
+    this.geologiqService.send('CameraManager', 'LookWest');
+  }
 
   lookNorth() {
     this.geologiqService.send('CameraManager', 'LookNorth');
+  }
+
+  lookSouth() {
+    this.geologiqService.send('CameraManager', 'LookSouth');
   }
 
   frameAllContent() {

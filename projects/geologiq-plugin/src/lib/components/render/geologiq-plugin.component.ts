@@ -160,7 +160,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                         // requires unity to callback when the surfaces and infrastructures are loaded
                         // until Petter add the support for callback use this workaround
                         setTimeout(() => {
-                            this.geologiq3d?.lookNorth();
+                            this.geologiq3d?.lookEast();
                         }, 1 * 1000);
                     }
                 }
