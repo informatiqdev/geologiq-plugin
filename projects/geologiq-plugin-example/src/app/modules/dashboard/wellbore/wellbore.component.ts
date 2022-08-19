@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEvent, Ocean, GeologiqService } from 'geologiq-plugin';
 
 @Component({
@@ -7,7 +7,7 @@ import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEve
     templateUrl: './wellbore.component.html',
     styleUrls: ['./wellbore.component.scss']
 })
-export class WellboreComponent implements OnDestroy {
+export class WellboreComponent implements OnDestroy, AfterViewInit {
     private destroy$ = new Subject<void>();
 
     @ViewChild('plugin')
@@ -273,7 +273,7 @@ export class WellboreComponent implements OnDestroy {
             },
             {
                 "wellId": "icQsBrMvLu",
-                "wellboreId": "hoQvXGOnWc", 
+                "wellboreId": "hoQvXGOnWc",
                 "defSurveyHeaderId": "6yTuW"
             }
         ];
@@ -309,6 +309,10 @@ export class WellboreComponent implements OnDestroy {
             '332a1795-8ca6-440c-8975-543c671cd21c' // ivar aasen platform
         ];
         this.geologiq?.drawInfrastructures(structures);
+    }
+
+    ngAfterViewInit(): void {
+        this.refresh();
     }
 
     ngOnDestroy(): void {
@@ -355,11 +359,13 @@ export class WellboreComponent implements OnDestroy {
 
     toggle3d(): void {
         this.show3d = !this.show3d;
-    }
 
-    onGeologiqLoad(): void {
-        setTimeout(() => {
-            this.refresh();
-        }, 0);
+        if (this.show3d) {
+            // NOTE: after toggling, plugin refernce is available in the next angular change checking cycle
+            // so call the refresh after a delay so that the plugin is ready
+            setTimeout(() => {
+                this.refresh();
+            }, 0);
+        }
     }
 }

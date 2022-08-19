@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SurfaceTube } from './models/surface-tube';
 import { Point, Tube } from '../3d';
-import { SurfaceTube3dOptions } from './models/geologiq-3d-options';
 import { ConfigService } from '../data/config.service';
+import { SurfaceTube3dOptions } from './models/geologiq-3d-options';
 
 @Injectable({
     providedIn: 'root'

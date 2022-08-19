@@ -11,7 +11,7 @@
         </div>
         <div class="col">
             <div style="width: 1200px; height: 800px" *ngIf="show3d">
-                <geologiq-plugin (onLoad)="onGeologiqLoad()" (elementClick)="onElementClick($event)" #plugin></geologiq-plugin>
+                <geologiq-plugin (elementClick)="onElementClick($event)" #plugin></geologiq-plugin>
             </div>
         </div>
         <div class="col"></div>
