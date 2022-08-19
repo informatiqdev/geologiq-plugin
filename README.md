@@ -108,7 +108,7 @@ The following configuration is required by geologiq-plugin:
     dataUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.data.gz',
     frameworkUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.framework.js.gz',
     codeUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.wasm.gz',
-    productVersion: '4.0.0-a.24'
+    productVersion: '4.0.0-a.26'
 }
 ```
 
