@@ -24,7 +24,7 @@ export class InfrastructureService {
     }
 
     getInfrastructure(id: string): Observable<Infrastructure> {
-        const baseUrl = `${this.baseUrl}/services/fdp/infrastructures`;
+        const baseUrl = `${this.baseUrl}/services/fdp/infrastructures/${id}`;
         const url = `${baseUrl}/${id}.json?apiKey=${this.apiKey}&_=${this.version}`;
         return this.http.get<any>(url).pipe(
             map(infra => {

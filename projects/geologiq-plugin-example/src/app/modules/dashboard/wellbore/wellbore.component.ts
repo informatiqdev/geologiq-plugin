@@ -296,6 +296,14 @@ export class WellboreComponent implements OnDestroy, AfterViewInit {
                 "id": "7a74aff0-4576-49d8-b1b9-8e41df3e62c6",
                 "name": "Top Statfjord Gp"
             },
+            {
+                "id": "4f41f9bf-b554-4187-8e48-d88b887514bc",
+                "name": "WCFault1main"
+            },
+            {
+                "id": "1f6485ba-06cc-448c-84f7-ff89c1018c94",
+                "name": "WCFault2main"
+            }
         ];
         this.geologiq?.drawSurfaces(surfaces);
 
@@ -306,7 +314,8 @@ export class WellboreComponent implements OnDestroy, AfterViewInit {
         this.geologiq?.drawSurfaceTubes(surfaceTubes);
 
         const structures = [
-            '332a1795-8ca6-440c-8975-543c671cd21c' // ivar aasen platform
+            '332a1795-8ca6-440c-8975-543c671cd21c', // ivar aasen platform
+            '81d6ade5-3904-467b-822f-53c080737882' // 4 slot closed
         ];
         this.geologiq?.drawInfrastructures(structures);
     }
