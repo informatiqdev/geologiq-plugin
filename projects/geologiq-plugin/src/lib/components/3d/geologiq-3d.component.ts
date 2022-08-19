@@ -108,6 +108,10 @@ export class Geologiq3dComponent {
     this.geologiqService.send('ContentManager', 'Highlight', { content: ids });
   }
 
+  toggleElement(id: string | string[], show: boolean): void {
+    this.geologiqService.send('ContentManager', show ? 'ShowContent' : 'HideContent', id);
+  }
+
   removeAllHighlights(): void {
     this.geologiqService.send('ContentManager', 'RemoveAllHighlights');
   }

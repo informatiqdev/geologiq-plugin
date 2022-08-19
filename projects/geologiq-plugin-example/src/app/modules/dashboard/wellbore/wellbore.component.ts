@@ -378,4 +378,13 @@ export class WellboreComponent implements OnDestroy, AfterViewInit {
             }, 0);
         }
     }
+
+    toggleElement(id: string): void {
+        if (!id) {
+            return;
+        }
+
+        const el = this.parseElement(id);
+        this.geologiq?.toggleElement(el);
+    }
 }

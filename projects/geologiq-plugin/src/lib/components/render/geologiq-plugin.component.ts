@@ -58,6 +58,8 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
     private loaded$ = new BehaviorSubject<boolean>(false);
 
+    private visibility = new Map<string, boolean>();
+
     constructor(
         private geologiq: GeologiqService,
         private riskRender: RiskRenderService,
@@ -278,6 +280,19 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.geologiq3d?.highlightElement(ids);
     }
 
+    toggleElement(elements: (DsisWellbore | GeologiqSurface | string)[]): void {
+        const ids: string[] = this.parseElementId(elements);
+        ids.forEach(id => {
+            let show = false;
+            if (this.visibility.has(id)) {
+                show = this.visibility.get(id) ? false : true;
+            }
+
+            this.visibility.set(id, show);
+            this.geologiq3d?.toggleElement(id, show);
+        });
+    }
+
     removeAllHighlights(): void {
         this.geologiq3d?.removeAllHighlights();
     }
@@ -308,6 +323,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         this.infrastructureRender.clear();
         this.surfaceTubeRender.clear();
         this.geologiq3d.clear();
+        this.visibility.clear();
     }
 
     @HostListener('window:message', ['$event'])
