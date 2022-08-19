@@ -315,7 +315,8 @@ export class WellboreComponent implements OnDestroy, AfterViewInit {
 
         const structures = [
             '332a1795-8ca6-440c-8975-543c671cd21c', // ivar aasen platform
-            '81d6ade5-3904-467b-822f-53c080737882' // 4 slot closed
+            '81d6ade5-3904-467b-822f-53c080737882', // 4 slot closed
+            '01d03901-12b9-4961-a4cc-2364bdffa056' // jack up rig
         ];
         this.geologiq?.drawInfrastructures(structures);
     }
