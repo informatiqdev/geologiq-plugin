@@ -10,7 +10,7 @@ export const environment = {
       dataUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.data.gz',
       frameworkUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.framework.js.gz',
       codeUrl: 'https://cdn.informatiq.no/unity/geologiq/[version]/geologiq.wasm.gz',
-      productVersion: '4.0.0-a.26'
+      productVersion: '4.0.0-a.27'
     },
     services: {
       fdp: {
