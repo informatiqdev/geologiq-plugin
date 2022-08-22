@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEvent, Ocean, GeologiqService } from 'geologiq-plugin';
+import { GeologiqPluginComponent, DsisWellbore, GeologiqSurface, ElementClickEvent, Ocean } from 'geologiq-plugin';
 
 @Component({
     selector: 'app-wellbore',

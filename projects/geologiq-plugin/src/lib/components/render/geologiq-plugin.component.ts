@@ -3,7 +3,7 @@ import {
     HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild
 } from '@angular/core';
 import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
-import { catchError, filter, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, delay, filter, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
 import { CasingRenderService } from '../../services/render/casing-render.service';
@@ -35,7 +35,7 @@ import { SurfaceTubeRenderService } from '../../services/render/surface-tube-ren
 export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     private destroy$ = new Subject<void>();
     private render$ = new Subject<void>();
-    private rendered = false;
+    private isRendered$ = new BehaviorSubject<boolean>(false);
 
     private position?: Point | null;
     private wellbores?: WellboreData;
@@ -85,11 +85,11 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         ).subscribe();
 
         this.render$.pipe(
-            filter(() => null != this.geologiq3d && null != this.position && !this.rendered),
+            filter(() => null != this.geologiq3d && null != this.position && !this.isRendered$.getValue()),
             tap(() => {
                 this.geologiq3d?.show();
                 this.geologiq3d?.createView(this.position ?? new Point);
-                this.rendered = true;
+                this.isRendered$.next(true);
 
                 this.refreshView();
             }),
@@ -141,7 +141,9 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                     this.setRisks((risks as any).flat());
 
                     if (this.isReady()) {
-                        this.refreshView();
+                        this.renderWellbores();
+                        this.renderCasings();
+                        this.renderRisks();
                     }
                 }
             }),
@@ -163,17 +165,21 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
 
                     if (this.isReady()) {
                         this.renderSurfaces();
-
-                        // NOTE: temporariliy do home fly with a timeout after surface rendering instructions are sent to unity
-                        // ideally it should be done after all the contents are loaded but that
-                        // requires unity to callback when the surfaces and infrastructures are loaded
-                        // until Petter add the support for callback use this workaround
-                        setTimeout(() => {
-                            this.geologiq3d?.lookEast();
-                        }, 1 * 1000);
                     }
                 }
             }),
+            switchMap(() => {
+                // NOTE: temporariliy do home fly with a timeout after surface rendering instructions are sent to unity
+                // ideally it should be done after all the contents are loaded but that
+                // requires unity to callback when the surfaces and infrastructures are loaded
+                // until Petter add the support for callback use this workaround
+                return this.isRendered$.pipe(
+                    filter(r => r === true),
+                    take(1),
+                    delay(1.5 * 1000),
+                )
+            }),
+            tap(() => this.geologiq3d?.lookEast()),
             takeUntil(this.destroy$)
         ).subscribe();
 
@@ -227,7 +233,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private isReady(): boolean {
-        return null != this.geologiq3d && this.rendered;
+        return null != this.geologiq3d && this.isRendered$.getValue();
     }
 
     ngAfterViewInit(): void {
