@@ -1,10 +1,16 @@
 {
   "name": "@informatiq/geologiq-plugin",
-  "version": "10.0.8",
+  "version": "10.0.9",
   "author": {
     "name": "InformatiQ"
   },
-  "keywords": [ "informatiq", "geologiq", "angular", "ng", "unity" ],
+  "keywords": [
+    "informatiq",
+    "geologiq",
+    "angular",
+    "ng",
+    "unity"
+  ],
   "private": false,
   "description": "Angular library for InformatiQ GeologiQ 3D Engine, which is a 3D engine tailored for rendering 3D models of offshore oil fields.",
   "peerDependencies": {

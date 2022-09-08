@@ -1,0 +1,106 @@
+# Node.js with Angular
+# Build a Node.js project that uses Angular.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+trigger:
+  branches:
+    include:
+    - main
+
+pr: none
+
+resources:
+- repo: self
+
+variables:
+  # Build Agent VM image
+  vmImageName: 'ubuntu-latest'
+
+pool:
+  vmImage: $(vmImageName)
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - script: |
+        git config --global user.email "build@informatiq.no"
+        git config --global user.name "Informatiq Build Agent"
+        git config --global init.defaultBranch $(Build.SourceBranchName)
+      displayName: Configure global Git account
+
+    - checkout: self
+      clean: true
+      persistCredentials: true
+
+    - script: |
+        git switch -c $(Build.SourceBranchName)
+      displayName: Switch git branch
+
+    - task: NodeTool@0
+      displayName: 'Install Node.js'
+      inputs:
+        versionSpec: '12.x'
+
+    - script: |
+        npm cache verify
+        npm install   
+      displayName: 'npm install - Dependencies'
+
+    - script: |
+        npm run lint
+      displayName: 'npm lint - Running code analysis'
+
+    - script: |
+        npm version patch
+      displayName: 'npm version - Upgrade patch version - workspace'
+
+    - script: |
+        npm version patch
+      displayName: 'npm version - Upgrade patch version - geologiq-plugin'
+      workingDirectory: projects/geologiq-plugin
+
+    - script: |
+        npm run build geologiq-plugin
+      displayName: 'npm build - Building geologiq-plugin'
+
+    - script: |
+        npm run build
+      displayName: 'npm build - Building geologiq-plugin'
+
+    - script: |
+        git commit -a -m "Increased version number [skip ci]"
+        git push origin $(Build.SourceBranchName)
+      displayName: Push version change to Git
+
+    - publish: dist
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      artifact: Components
+      displayName: Publish Angular dist
+
+- stage: Publish
+  displayName: Publish NPM packages to Azure artifacts
+  dependsOn: Build
+
+  jobs:
+  - job: Publish
+    displayName: Publish NPM packages
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - download: current
+      artifact: Components
+  
+    - task: Npm@1
+      displayName: Publish geologiq-plugin
+      inputs: 
+        
+        command: publish
+        workingDir: $(Pipeline.Workspace)/Components/geologiq-plugin
+        publishRegistry: useFeed
+        publishFeed: Informatiq - Components/Packages    
