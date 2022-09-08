@@ -6,13 +6,13 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'home', redirectTo: 'dashboard', pathMatch: 'full' },  
+  { path: 'home', redirectTo: 'dashboard', pathMatch: 'full' },
   {
     path: '', component: LayoutComponent, data: { title: 'Home' },
     children: [
       { path: 'dashboard', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
     ]
-  }, 
+  },
   {
     path: 'error/404',
     component: NotFoundComponent

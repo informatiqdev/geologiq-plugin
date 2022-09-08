@@ -5,7 +5,9 @@ import { Tube, Model3D, Point, SurfaceModel } from '../../services/3d';
 import { Ocean } from '../../services/render';
 import { DOCUMENT } from '@angular/common';
 
+
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'geologiq-3d',
   templateUrl: './geologiq-3d.component.html',
   styleUrls: ['./geologiq-3d.component.scss']
@@ -116,23 +118,23 @@ export class Geologiq3dComponent {
     this.geologiqService.send('ContentManager', 'RemoveAllHighlights');
   }
 
-  lookEast() {
+  lookEast(): void {
     this.geologiqService.send('CameraManager', 'LookEast');
   }
 
-  lookWest() {
+  lookWest(): void {
     this.geologiqService.send('CameraManager', 'LookWest');
   }
 
-  lookNorth() {
+  lookNorth(): void {
     this.geologiqService.send('CameraManager', 'LookNorth');
   }
 
-  lookSouth() {
+  lookSouth(): void {
     this.geologiqService.send('CameraManager', 'LookSouth');
   }
 
-  frameAllContent() {
+  frameAllContent(): void {
     this.geologiqService.send('CameraManager', 'FrameAllContent');
   }
 

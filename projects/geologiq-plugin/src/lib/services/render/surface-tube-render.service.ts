@@ -35,7 +35,7 @@ export class SurfaceTubeRenderService {
                 const tube: Tube = {
                     id: surfaceTube.id,
                     name: surfaceTube.name ?? '',
-                    points: points,
+                    points,
                     lengths: surfaceTube.md,
                     startPosition: head,
                     radius: config.radius ?? defaultConfig.radius,

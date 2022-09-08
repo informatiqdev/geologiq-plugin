@@ -35,6 +35,7 @@ export interface Surface3dOptions {
     surfaces?: Map<string, Surface3dConfig>;
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface Surface3dConfig {}
 
 export interface Infrastructure3dOptions {
@@ -42,8 +43,10 @@ export interface Infrastructure3dOptions {
     infrastructures?: Map<string, Infrastructure3dConfig>;
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface Infrastructure3dConfig {}
 
+// tslint:disable-next-line:no-empty-interface
 export interface SurfaceTube3dConfig {}
 
 export interface SurfaceTube3dOptions {

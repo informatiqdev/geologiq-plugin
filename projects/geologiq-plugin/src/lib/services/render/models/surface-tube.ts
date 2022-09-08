@@ -1,7 +1,7 @@
 import { Point } from '../../3d';
 
 export class SurfaceTube {
-    id: string = '';
+    id = '';
     name?: string;
     md?: number[];
     points?: (Point | number[])[];

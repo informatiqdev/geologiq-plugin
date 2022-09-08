@@ -26,7 +26,7 @@ import { SurfaceTubeService } from '../../services/data/surface-tube.service';
 import { SurfaceTubeRenderService } from '../../services/render/surface-tube-render.service';
 
 @Component({
-    // eslint-disable-next-line @angular-eslint/component-selector
+    // tslint:disable-next-line:component-selector
     selector: 'geologiq-plugin',
     templateUrl: './geologiq-plugin.component.html',
     styleUrls: ['./geologiq-plugin.component.scss'],
@@ -88,7 +88,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             filter(() => null != this.geologiq3d && null != this.position && !this.isRendered$.getValue()),
             tap(() => {
                 this.geologiq3d?.show();
-                this.geologiq3d?.createView(this.position ?? new Point);
+                this.geologiq3d?.createView(this.position ?? new Point());
                 this.isRendered$.next(true);
 
                 this.refreshView();
@@ -177,7 +177,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
                     filter(r => r === true),
                     take(1),
                     delay(1.5 * 1000),
-                )
+                );
             }),
             tap(() => this.geologiq3d?.lookEast()),
             takeUntil(this.destroy$)

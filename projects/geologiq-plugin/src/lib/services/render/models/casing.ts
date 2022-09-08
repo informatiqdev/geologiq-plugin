@@ -1,7 +1,7 @@
 import { ModelRef } from './model-ref';
 
 export class Casing {
-    id: string = '';
+    id = '';
     name?: string;
     shoeDepthMd = 0;
     parent?: ModelRef;

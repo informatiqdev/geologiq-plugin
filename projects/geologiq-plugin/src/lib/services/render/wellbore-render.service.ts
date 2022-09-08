@@ -35,7 +35,7 @@ export class WellboreRenderService {
                 const tube: Tube = {
                     id: wellbore.id,
                     name: wellbore.name ?? '',
-                    points: points,
+                    points,
                     lengths: wellbore.md,
                     startPosition: head,
                     radius: config.radius ?? defaultConfig.radius,
