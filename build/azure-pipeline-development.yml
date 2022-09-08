@@ -70,10 +70,6 @@ stages:
       displayName: 'npm build - Building geologiq-plugin'
 
     - script: |
-        npm run build-prod
-      displayName: 'npm build - Building geologiq-plugin'
-
-    - script: |
         git commit -a -m "Increased version number [skip ci]"
         git push origin $(Build.SourceBranchName)
       displayName: Push version change to Git
