@@ -29,8 +29,8 @@ stages:
       vmImage: $(vmImageName)
     steps:
     - script: |
-        git config --global user.email "build@informatiq.no"
-        git config --global user.name "Informatiq Build Agent"
+        git config --global user.email $(BuildAgentEmail)
+        git config --global user.name $(BuildAgentName)
         git config --global init.defaultBranch $(Build.SourceBranchName)
       displayName: Configure global Git account
 
