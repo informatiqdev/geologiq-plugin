@@ -66,11 +66,11 @@ stages:
       workingDirectory: projects/geologiq-plugin
 
     - script: |
-        npm run build geologiq-plugin --prod
+        npm run build-prod geologiq-plugin
       displayName: 'npm build - Building geologiq-plugin'
 
     - script: |
-        npm run build --prod
+        npm run build-prod
       displayName: 'npm build - Building geologiq-plugin'
 
     - script: |
