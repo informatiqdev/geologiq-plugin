@@ -100,3 +100,11 @@ stages:
         workingDir: $(Pipeline.Workspace)/Components/geologiq-plugin
         publishRegistry: useFeed
         publishFeed: Informatiq - Components/Packages    
+
+    - task: Npm@1
+      displayName: Publish geologiq-plugin to public feed
+      inputs:         
+        command: publish
+        workingDir: $(Pipeline.Workspace)/Components/geologiq-plugin
+        publishRegistry: useExternalRegistry
+        publishEndpoint: npmjs   

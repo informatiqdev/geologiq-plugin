@@ -93,10 +93,9 @@ stages:
       artifact: Components
   
     - task: Npm@1
-      displayName: Publish geologiq-plugin
-      inputs: 
-        
+      displayName: Publish geologiq-plugin to Azure DevOps
+      inputs:         
         command: publish
         workingDir: $(Pipeline.Workspace)/Components/geologiq-plugin
         publishRegistry: useFeed
-        publishFeed: Informatiq - Components/Packages    
+        publishFeed: Informatiq - Components/Packages
