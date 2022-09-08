@@ -8,7 +8,7 @@ import { LayoutComponent } from './layout.component';
     declarations: [
         LayoutComponent
     ],
-    imports: [  
+    imports: [
         RouterModule
     ],
     exports: [

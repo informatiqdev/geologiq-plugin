@@ -7,11 +7,11 @@ import { AppLoadingService } from './app-loading.service';
     ]
 })
 export class AppLoadingModule
-{   
+{
     /**
      * Constructor
      */
-     constructor(private _appLoadingService: AppLoadingService)
+     constructor(private appLoadingService: AppLoadingService)
      {
      }
 }

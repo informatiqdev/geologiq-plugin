@@ -44,3 +44,5 @@ ssl/server.crt
 ssl/server.key
 /.vs
 /projects/geologiq-plugin-example/src/assets/unity/geologiq
+
+package-lock.json

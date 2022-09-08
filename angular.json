@@ -87,7 +87,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -159,9 +159,8 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/geologiq-example/tsconfig.app.json",
-              "projects/geologiq-example/tsconfig.spec.json",
-              "projects/geologiq-example/e2e/tsconfig.json"
+              "projects/geologiq-plugin-example/tsconfig.app.json",
+              "projects/geologiq-plugin-example/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"

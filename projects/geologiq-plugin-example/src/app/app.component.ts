@@ -25,7 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
-  private loadGeologiq() {
+  private loadGeologiq(): void {
     // Load Geologiq configuration
     const config: GeologiqConfig = {
       ...environment.config.geologiq,
@@ -33,17 +33,18 @@ export class AppComponent implements OnInit, OnDestroy {
         ...environment.config.services.fdp
       }
     };
-    if (!config)
+    if (!config) {
       throw new Error('Geologiq configuration not loaded.');
+    }
 
-    // Load Geologiq plugin 
+    // Load Geologiq plugin
     this.geologiqService.init('geologiq-3d', config, this.onLoaded, this.onProgress);
   }
 
   /**
    * Callback when Geoglogiq plugin has been loaded
    */
-  private onLoaded() {
+  private onLoaded(): void {
     console.log('GeologiQ plugin runtime loaded.');
   }
 
@@ -51,7 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
    * Callback to report progress of GeologiQ plugin loading
    * @param progress Progress of loading
    */
-  private onProgress(progress: number) {
-    // console.log(`GeologiQ plugin ${(100 * progress).toFixed(2)}% loaded.`); 
+  private onProgress(progress: number): void {
+    console.log(`GeologiQ plugin ${(100 * progress).toFixed(2)}% loaded.`);
   }
 }
