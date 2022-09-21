@@ -239,7 +239,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         return null != this.geologiq3d && this.isRendered$.getValue();
     }
 
-    private afterGeologiqIsReady(callback: () => void) {
+    private afterGeologiqIsReady(callback: () => void): void {
         const isLoaded$ = this.loaded$.pipe(
             filter(loaded => loaded === true),
         );
@@ -247,7 +247,7 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             filter(rendered => rendered === true),
         );
 
-        return combineLatest([isLoaded$, isRendered$]).pipe(
+        combineLatest([isLoaded$, isRendered$]).pipe(
             take(1),
             tap(() => {
                 callback();
