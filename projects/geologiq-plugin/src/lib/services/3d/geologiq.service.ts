@@ -29,9 +29,9 @@ export class GeologiqService implements OnDestroy {
 
   private loaded = false;
 
-  private unityActivated = new BehaviorSubject<boolean>(false);
+  private unityActivated$ = new BehaviorSubject<boolean>(false);
 
-  activated$ = this.unityActivated.pipe(
+  activated$ = this.unityActivated$.pipe(
     filter(active => true === active)
   );
 
@@ -113,7 +113,7 @@ export class GeologiqService implements OnDestroy {
         this.loaded = true;
 
         // Indicate that Unity3D Engine is activated
-        this.unityActivated.next(true);
+        this.unityActivated$.next(true);
       }),
       takeUntil(this.destroy$)
     ).subscribe();
@@ -161,7 +161,7 @@ export class GeologiqService implements OnDestroy {
             });
           } else {
             if (this.unityInstance) {
-              this.unityActivated.next(true);
+              this.unityActivated$.next(true);
             }
           }
         }
