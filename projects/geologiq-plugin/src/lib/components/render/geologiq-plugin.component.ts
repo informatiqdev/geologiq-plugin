@@ -2,7 +2,7 @@ import {
     AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter,
     HostListener, OnChanges, OnDestroy, OnInit, Output, ViewChild
 } from '@angular/core';
-import { forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
+import { forkJoin, of, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { catchError, delay, filter, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { Geologiq3dComponent } from '../3d/geologiq-3d.component';
@@ -35,7 +35,8 @@ import { SurfaceTubeRenderService } from '../../services/render/surface-tube-ren
 export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     private destroy$ = new Subject<void>();
     private render$ = new Subject<void>();
-    private isRendered$ = new BehaviorSubject<boolean>(false);
+    private isRendered$ = new BehaviorSubject<boolean>(false); // when a view is initiated in the unity
+    private loaded$ = new BehaviorSubject<boolean>(false); // when the unity player is loaded and actiavted
 
     private position?: Point | null;
     private wellbores?: WellboreData;
@@ -50,15 +51,13 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     private loadInfrastructures$ = new BehaviorSubject<string[]>([]);
     private loadSurfaceTubes$ = new BehaviorSubject<string[]>([]);
 
+    private visibility = new Map<string, boolean>();
+
     @ViewChild(Geologiq3dComponent)
     geologiq3d?: Geologiq3dComponent;
 
     @Output()
     elementClick = new EventEmitter<ElementClickEvent>();
-
-    private loaded$ = new BehaviorSubject<boolean>(false);
-
-    private visibility = new Map<string, boolean>();
 
     constructor(
         private geologiq: GeologiqService,
@@ -88,6 +87,10 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             filter(() => null != this.geologiq3d && null != this.position && !this.isRendered$.getValue()),
             tap(() => {
                 this.geologiq3d?.show();
+            }),
+            // NOTE: make sure that the unity canvas element is visible before initiating the view
+            delay(10),
+            tap(() => {
                 this.geologiq3d?.createView(this.position ?? new Point());
                 this.isRendered$.next(true);
 
@@ -236,6 +239,23 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
         return null != this.geologiq3d && this.isRendered$.getValue();
     }
 
+    private afterGeologiqIsReady(callback: () => void) {
+        const isLoaded$ = this.loaded$.pipe(
+            filter(loaded => loaded === true),
+        );
+        const isRendered$ = this.isRendered$.pipe(
+            filter(rendered => rendered === true),
+        );
+
+        return combineLatest([isLoaded$, isRendered$]).pipe(
+            take(1),
+            tap(() => {
+                callback();
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe();
+    }
+
     ngAfterViewInit(): void {
         this.geologiq.activated$.pipe(
             take(1),
@@ -265,41 +285,46 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     drawOcean(ocean: Ocean): void {
-        this.geologiq.activated$.pipe(
-            take(1),
-            tap(() => {
-                this.geologiq3d?.defineOcean(ocean);
-                this.geologiq3d?.toggleOcean(true);
-            }),
-            takeUntil(this.destroy$)
-        ).subscribe();
+        this.afterGeologiqIsReady(() => {
+            this.geologiq3d?.defineOcean(ocean);
+            this.geologiq3d?.toggleOcean(true);
+        });
     }
 
     zoomToElement(elements: (DsisWellbore | GeologiqSurface | string)[]): void {
-        const ids: string[] = this.parseElementId(elements);
-        this.geologiq3d?.lookAtContent(ids);
+        this.afterGeologiqIsReady(() => {
+            const ids: string[] = this.parseElementId(elements);
+            this.geologiq3d?.lookAtContent(ids);
+        });
     }
 
     highlightElement(elements: (DsisWellbore | GeologiqSurface | string)[]): void {
-        const ids: string[] = this.parseElementId(elements);
-
-        this.geologiq3d?.highlightElement(ids);
+        this.afterGeologiqIsReady(() => {
+            const ids: string[] = this.parseElementId(elements);
+            this.geologiq3d?.highlightElement(ids);
+        });
     }
 
     toggleElement(elements: (DsisWellbore | GeologiqSurface | string)[]): void {
-        const ids: string[] = this.parseElementId(elements);
-        ids.forEach(id => {
-            let show = false;
-            if (this.visibility.has(id)) {
-                show = this.visibility.get(id) ? false : true;
-            }
+        this.afterGeologiqIsReady(() => {
+            const ids: string[] = this.parseElementId(elements);
+            ids.forEach(id => {
+                let show = false;
+                if (this.visibility.has(id)) {
+                    show = this.visibility.get(id) ? false : true;
+                }
 
-            this.visibility.set(id, show);
-            this.geologiq3d?.toggleElement(id, show);
+                this.visibility.set(id, show);
+                this.geologiq3d?.toggleElement(id, show);
+            });
         });
     }
 
     removeAllHighlights(): void {
+        if (!this.isRendered$.getValue()) {
+            return;
+        }
+
         this.geologiq3d?.removeAllHighlights();
     }
 
@@ -478,7 +503,6 @@ export class GeologiqPluginComponent implements OnInit, AfterViewInit, OnChanges
             this.geologiq3d?.load3DModel(model);
         });
     }
-
 
     private setSurfaceTubes(value: SurfaceTube[] | SurfaceTubeData): void {
         if (value instanceof Array) {
